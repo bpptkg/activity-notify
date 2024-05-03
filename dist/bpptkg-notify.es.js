@@ -121,5 +121,5 @@ f.onmessage = function(e) {
   const t = JSON.parse(e.data), n = document.getElementById("rsam-popup"), o = document.getElementById("rsam-pulse"), i = document.getElementById("rsam-popup-message");
   if (t.message && (!n || !o))
     return alert(t.message);
-  t.message ? (n && localStorage.getItem("popup") !== "off" && (n.style.display = "flex"), o && (o.style.display = "block"), i.innerHTML = t.message) : (n.style.display = "none", o.style.display = "none", i.innerHTML = "", localStorage.setItem("popup", "on"));
+  t.message ? (n && localStorage.getItem("popup") !== "off" && (n.style.display = "flex"), o && (o.style.display = "block"), i.innerHTML = t.message) : (n.style.display = "none", localStorage.setItem("popup", "on"));
 };

@@ -1,0 +1,25 @@
+{
+  "name": "bpptkg-notify",
+  "version": "1.0.0",
+  "description": "BPPTKG notification alert library",
+  "files":["dist"],
+  "main":"./dist/bpptkg-notify.umd.js",
+  "module":"./dist/bpptkg-notify.es.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/bpptkg-notify.es.js",
+      "require": "./dist/bpptkg-notify.umd.js"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.2.10"
+  }
+}

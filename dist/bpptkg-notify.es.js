@@ -1,4 +1,4 @@
-function r() {
+function d() {
   const e = document.createElement("style");
   document.head.appendChild(e), e.innerHTML = `
       #rsam-popup {
@@ -87,9 +87,9 @@ function u() {
   e.id = "rsam-pulse", e.style.display = "none", e.innerHTML = '<div class="ringring"></div><div class="circle"></div>', document.body.appendChild(e);
   let t = !1;
   e.addEventListener("mousedown", function(i) {
-    var a = i.clientX - parseInt(window.getComputedStyle(this).left), d = i.clientY - parseInt(window.getComputedStyle(this).top);
-    function s(l) {
-      t = !0, e.style.left = l.clientX - a + "px", e.style.top = l.clientY - d + "px";
+    var l = i.clientX - parseInt(window.getComputedStyle(this).left), r = i.clientY - parseInt(window.getComputedStyle(this).top);
+    function s(a) {
+      t = !0, e.style.left = a.clientX - l + "px", e.style.top = a.clientY - r + "px";
     }
     function p() {
       setTimeout(() => {
@@ -112,11 +112,11 @@ function u() {
     }, 200));
   });
 }
-r();
+d();
 c();
 u();
-const m = new EventSource("http://localhost:8000/notify");
-m.onmessage = function(e) {
+const m = new URL(import.meta.url).searchParams.get("url"), f = new EventSource(`${atob(m)}/notify`);
+f.onmessage = function(e) {
   const t = JSON.parse(e.data), n = document.getElementById("rsam-popup"), o = document.getElementById("rsam-pulse"), i = document.getElementById("rsam-popup-message");
   if (t.message && (!n || !o))
     return alert(t.message);

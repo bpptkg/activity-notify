@@ -35,7 +35,7 @@ function d() {
           left: calc(100% - 70px);
           top: 0;
           cursor: pointer;
-          z-index: 1001;
+          z-index: 1050;
       }
       
       #rsam-pulse .circle {

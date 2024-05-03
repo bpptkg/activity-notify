@@ -35,6 +35,7 @@ function d() {
           left: calc(100% - 70px);
           top: 0;
           cursor: pointer;
+          z-index: 1001;
       }
       
       #rsam-pulse .circle {
@@ -43,8 +44,8 @@ function d() {
           background-color: red;
           border-radius: 50%;
           position: absolute;
-          top: 23px;
-          left: 23px;
+          top: 20px;
+          left: 20px;
       }
       
       #rsam-pulse .ringring {

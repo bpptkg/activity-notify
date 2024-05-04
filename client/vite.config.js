@@ -7,6 +7,7 @@ module.exports = defineConfig({
       entry: path.resolve(__dirname, 'lib/main.js'),
       name: 'BPPTKG Notify',
       fileName: (format) => `bpptkg-notify.${format}.js`
-    }
+    },
+    outDir: '../dist'
   }
 });

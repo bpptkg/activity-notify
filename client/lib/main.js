@@ -34,6 +34,6 @@ source.onmessage = function (event) {
         // popup.style.display = 'none'
         // pulse.style.display = 'none'
         // messageEl.innerHTML = ''
-        // localStorage.setItem('popup', 'on')
+        localStorage.setItem('popup', 'on')
     }
 };

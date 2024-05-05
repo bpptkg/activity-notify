@@ -88,9 +88,9 @@ function u() {
   e.id = "rsam-pulse", e.style.display = "none", e.innerHTML = '<div class="ringring"></div><div class="circle"></div>', document.body.appendChild(e);
   let t = !1;
   e.addEventListener("mousedown", function(i) {
-    var l = i.clientX - parseInt(window.getComputedStyle(this).left), r = i.clientY - parseInt(window.getComputedStyle(this).top);
+    var r = i.clientX - parseInt(window.getComputedStyle(this).left), l = i.clientY - parseInt(window.getComputedStyle(this).top);
     function s(a) {
-      t = !0, e.style.left = a.clientX - l + "px", e.style.top = a.clientY - r + "px";
+      t = !0, e.style.left = a.clientX - r + "px", e.style.top = a.clientY - l + "px";
     }
     function p() {
       setTimeout(() => {
@@ -121,5 +121,5 @@ f.onmessage = function(e) {
   const t = JSON.parse(e.data), n = document.getElementById("rsam-popup"), o = document.getElementById("rsam-pulse"), i = document.getElementById("rsam-popup-message");
   if (t.message && (!n || !o))
     return alert(t.message);
-  t.message ? (n && localStorage.getItem("popup") !== "off" && (n.style.display = "flex"), o && (o.style.display = "block"), i.innerHTML = t.message) : (n.style.display = "none", localStorage.setItem("popup", "on"));
+  t.message && (n && localStorage.getItem("popup") !== "off" && (n.style.display = "flex"), o && (o.style.display = "block"), i.innerHTML = t.message);
 };

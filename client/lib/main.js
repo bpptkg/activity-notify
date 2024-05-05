@@ -31,9 +31,9 @@ source.onmessage = function (event) {
 
         messageEl.innerHTML = data.message
     } else {
-        popup.style.display = 'none'
+        // popup.style.display = 'none'
         // pulse.style.display = 'none'
         // messageEl.innerHTML = ''
-        localStorage.setItem('popup', 'on')
+        // localStorage.setItem('popup', 'on')
     }
 };

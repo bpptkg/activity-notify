@@ -14,9 +14,7 @@ const startSSE = (res) => {
   res.write('\n');
 }
 
-let mepas, melab = 0
-let mepasRaw, melabRaw = ''
-let alertMessage = ''
+let mepas, melab, alertType = 0
 let date = ''
 let loading = false
 const getRsamData = async () => {
@@ -25,24 +23,22 @@ const getRsamData = async () => {
     const [mepasRawVal, melabRawVal] = await Promise.all(['MEPAS_HHZ_VG_00', 'MELAB_HHZ_VG_00'].map(async (code) => {
       const response = await fetch(`http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0005&rsamP=10&tz=Asia/Jakarta&csv=1`);
       const data = await response.text();
-      return (data.split('\n').filter(Boolean).reverse()[0])
+      return Number(data.split('\n').filter(Boolean).reverse()[0].split(',')[1])
     }))
 
-    mepasRaw = mepasRawVal
-    melabRaw = melabRawVal
-    mepas = Number(mepasRawVal.split(',')[1])
-    melab = Number(melabRawVal.split(',')[1])
+    mepas = Math.round(Number(mepasRawVal.split(',')[1]))
+    melab = Math.round(Number(melabRawVal.split(',')[1]))
     date = mepasRawVal.split(',')[0]
 
     const apgAlert = mepas > 5000 && mepas / melab < 2
     const vtAlert = mepas > 50000 && mepas / melab > 2
 
-    if (apgAlert) {
-      alertMessage = `Nilai RSAM ${Math.round(mepas)} <br> Waspadai Kejadian APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${date}</span>`
+    if (apgAlert || mepas > 400) {
+      alertType = 1
     } else if (vtAlert) {
-      alertMessage = `Nilai RSAM ${Math.round(mepas)} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${date}</span>`
+      alertType = 2
     } else {
-      alertMessage = ''
+      alertType = 0
     }
   } catch (error) {
     console.error(error)
@@ -62,32 +58,15 @@ http.createServer(async (req, res) => {
 
   if (uri === '/notify') {
     startSSE(res)
-    let localAlertMessage = '';
-    res.write(`data: ${JSON.stringify({ message: alertMessage })}\n\n`);
+    res.write(`data: ${JSON.stringify({ mepas, melab, alertType, date })}\n\n`);
 
     let i = 0
     let interval = setInterval(() => {
       i++
-      if (localAlertMessage != alertMessage || i > 30) {
+      if (alertType || i > 30) {
         i = 0
-        localAlertMessage = alertMessage
-        res.write(`data: ${JSON.stringify({ message: alertMessage })}\n\n`);
+        res.write(`data: ${JSON.stringify({ mepas, melab, alertType, date })}\n\n`);
       }
-    }, 1000)
-
-    res.on('close', () => {
-      clearInterval(interval)
-      res.end()
-    })
-    return;
-  }
-
-  if (uri === '/rsam') {
-    startSSE(res)
-    res.write(`data: ${JSON.stringify({ mepasRaw: mepasRaw, mepas: mepas, melabRaw: melabRaw, melab: melab })}\n\n`);
-
-    let interval = setInterval(() => {
-      res.write(`data: ${JSON.stringify({ mepasRaw: mepasRaw, mepas: mepas, melabRaw: melabRaw, melab: melab })}\n\n`);
     }, 1000)
 
     res.on('close', () => {

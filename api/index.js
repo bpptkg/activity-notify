@@ -33,7 +33,7 @@ const getRsamData = async () => {
     const apgAlert = mepas > 5000 && mepas / melab < 2
     const vtAlert = mepas > 50000 && mepas / melab > 2
 
-    if (apgAlert || mepas > 400) {
+    if (apgAlert || mepas > 500) {
       alertType = 1
     } else if (vtAlert) {
       alertType = 2
@@ -61,12 +61,14 @@ http.createServer(async (req, res) => {
     res.write(`data: ${JSON.stringify({ mepas, melab, alertType, date })}\n\n`);
 
     let i = 0
+    let prevAlertType = 0
     let interval = setInterval(() => {
       i++
-      if (alertType || i > 30) {
+      if (alertType || (prevAlertType && !alertType) || i > 30) {
         i = 0
         res.write(`data: ${JSON.stringify({ mepas, melab, alertType, date })}\n\n`);
       }
+      prevAlertType = alertType
     }, 1000)
 
     res.on('close', () => {

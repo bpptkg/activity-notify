@@ -33,7 +33,7 @@ const getRsamData = async () => {
     const apgAlert = mepas > 5000 && mepas / melab < 2
     const vtAlert = mepas > 50000 && mepas / melab > 2
 
-    if (apgAlert || mepas > 500) {
+    if (apgAlert) {
       alertType = 1
     } else if (vtAlert) {
       alertType = 2

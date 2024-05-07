@@ -21,7 +21,7 @@ const getRsamData = async () => {
   loading = true
   try {
     const [mepasRawVal, melabRawVal] = await Promise.all(['MEPAS_HHZ_VG_00', 'MELAB_HHZ_VG_00'].map(async (code) => {
-      const response = await fetch(`http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0005&rsamP=10&tz=Asia/Jakarta&csv=1`);
+      const response = await fetch(`http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0006&rsamP=10&tz=Asia/Jakarta&csv=1`);
       const data = await response.text();
       return data.split('\n').filter(Boolean).reverse()[0]
     }))

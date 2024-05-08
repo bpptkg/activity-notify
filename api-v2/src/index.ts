@@ -12,7 +12,7 @@ setInterval(() => {
   getRsamData();
 }, 1000);
 
-const port = 3000;
+const port = 18000;
 serve({
   fetch: app.fetch,
   port,

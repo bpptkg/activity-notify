@@ -42,7 +42,8 @@ export const getRsamData = async () => {
   if (mepas > median * 10 ) {
     await eventsDb.update((db) => db.unshift({
       median,
-      lastRsam: mepas,
+      median_x_10: median * 10,
+      mepas: mepas,
       data: mepasJSON,
     }))
   }

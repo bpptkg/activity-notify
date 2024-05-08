@@ -1,4 +1,6 @@
 import { Memory, Low } from 'lowdb'
+import { JSONFilePreset } from 'lowdb/node'
+import path from 'path'
 
 type Data = {mepas: number, melab: number, date: string, alertType: number}
 export const memoryDb = new Low<Data>(new Memory(), {
@@ -7,3 +9,5 @@ export const memoryDb = new Low<Data>(new Memory(), {
     date: '',
     alertType: 0
 })
+
+export const eventsDb = await JSONFilePreset<any[]>(path.resolve(process.cwd(), './data/events.json'), [])

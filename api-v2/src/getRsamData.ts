@@ -1,4 +1,5 @@
-import { memoryDb } from "./db";
+import { eventsDb, memoryDb } from "./db";
+import { findMedian } from "./utils";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -6,7 +7,7 @@ const csvToJSON = (csv: string): [string, number][] =>
     .filter(Boolean)
     .map((x) => {
       const row = x.split(",");
-      return [row[0], Number(row[1])];
+      return [row[0], Math.abs(Number(row[1]))];
     });
 
 export const getRsamData = async () => {
@@ -36,4 +37,13 @@ export const getRsamData = async () => {
         ? 2
         : 0;
   });
+  const median = findMedian(mepasJSON.map((x) => x[1]));
+  
+  if (mepas > median * 10 ) {
+    await eventsDb.update((db) => db.unshift({
+      median,
+      lastRsam: mepas,
+      data: mepasJSON,
+    }))
+  }
 };

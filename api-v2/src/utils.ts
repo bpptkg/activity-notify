@@ -1,6 +1,6 @@
 export const findMedian = (numbers: number[]) => {
     if (numbers.length === 0) throw new Error("No numbers provided");
-    const sortedNumbers = [...numbers].sort((a, b) => a - b);
+    const sortedNumbers = (JSON.parse(JSON.stringify(numbers))).sort((a: number, b: number) => a - b);
     const midIndex = Math.floor(sortedNumbers.length / 2);
 
     if (sortedNumbers.length % 2 === 0) {

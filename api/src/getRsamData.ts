@@ -10,7 +10,12 @@ const csvToJSON = (csv: string): [string, number][] =>
       return [row[0], Math.abs(Number(row[1]))];
     });
 
-let previousEvent = false;
+let eventInProgress = false;
+let eventStart = ''
+let eventEnd = ''
+let eventMedianStart = 0
+let eventRsamStart = 0
+
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
@@ -40,20 +45,18 @@ export const getRsamData = async () => {
   });
   const median = findMedian(mepasJSON.map((x) => x[1]));
 
-  if (mepas > median * 10) {
-    if (!previousEvent) {
-      await eventsDb.update((db) =>
-        db.unshift({
-          median,
-          median_x_10: median * 10,
-          mepas: mepas,
-          data: mepasJSON,
-        })
-      );
-    }
+  if (!eventInProgress && mepas > median * 10) {
+    eventStart = date
+    eventMedianStart = median
+    eventRsamStart = mepas
 
-    previousEvent = true;
-  } else {
-    previousEvent = false;
+    eventInProgress = true;
+  } else if (eventInProgress && mepas <= median * 10) {
+    eventEnd = date
+
+    await eventsDb.update((events) => {
+      events.push({start: eventStart, end: eventEnd, median: eventMedianStart, rsam: eventRsamStart})
+    })
+    eventInProgress = false;
   }
 };

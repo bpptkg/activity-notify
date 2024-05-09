@@ -10,6 +10,7 @@ const csvToJSON = (csv: string): [string, number][] =>
       return [row[0], Math.abs(Number(row[1]))];
     });
 
+let previousEvent = false;
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
@@ -38,13 +39,21 @@ export const getRsamData = async () => {
         : 0;
   });
   const median = findMedian(mepasJSON.map((x) => x[1]));
-  
-  if (mepas > median * 10 ) {
-    await eventsDb.update((db) => db.unshift({
-      median,
-      median_x_10: median * 10,
-      mepas: mepas,
-      data: mepasJSON,
-    }))
+
+  if (mepas > median * 10) {
+    if (!previousEvent) {
+      await eventsDb.update((db) =>
+        db.unshift({
+          median,
+          median_x_10: median * 10,
+          mepas: mepas,
+          data: mepasJSON,
+        })
+      );
+    }
+
+    previousEvent = true;
+  } else {
+    previousEvent = false;
   }
 };

@@ -1,5 +1,8 @@
+import path from "path";
 import { eventsDb, memoryDb } from "./db";
 import { findMedian } from "./utils";
+import { JSONFilePreset } from "lowdb/node";
+import dayjs from "dayjs";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -29,7 +32,7 @@ export const getRsamData = async () => {
   const date = mepasJSON[mepasJSON.length - 1][0];
 
   if (Number.isNaN(mepas)) {
-    console.log('IS NAN');
+    console.log("IS NAN");
     console.log(mepasRawVal);
   }
 
@@ -46,7 +49,22 @@ export const getRsamData = async () => {
   });
   const median = findMedian(mepasJSON.map((x) => x[1]));
 
-  if (!eventInProgress &&mepas > median * 10) {
+  const dailyDb = await JSONFilePreset<any[]>(
+    path.resolve(process.cwd(), `./data/${dayjs().format("YYYY-MM-DD_HH")}`),
+    []
+  );
+
+  await dailyDb.update((events) => {
+    events.push({
+      date,
+      mepas,
+      median,
+      status: mepas > median * 3,
+      data: mepasJSON.map(x => x[1]),
+    });
+  });
+
+  if (!eventInProgress && mepas > median * 3) {
     eventInProgress = true
     await eventsDb.update((events) => {
       events.push({

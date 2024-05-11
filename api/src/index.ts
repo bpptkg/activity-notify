@@ -3,8 +3,10 @@ import { Hono } from "hono";
 import { notifyController } from "./controllers/notifyController";
 import { getRsamData } from "./getRsamData";
 import { eventController } from "./controllers/eventController";
+import { cors } from 'hono/cors'
 
 const app = new Hono();
+app.use("*", cors());
 app.route("notify", notifyController);
 app.route("events", eventController);
 

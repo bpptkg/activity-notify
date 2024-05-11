@@ -1,8 +1,4 @@
-import path from "path";
 import { eventsDb, memoryDb } from "./db";
-import { findMedian } from "./utils";
-import { JSONFilePreset } from "lowdb/node";
-import dayjs from "dayjs";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -12,8 +8,6 @@ const csvToJSON = (csv: string): [string, number][] =>
       const row = x.split(",");
       return [row[0], Math.abs(Number(row[1]))];
     });
-
-let eventInProgress = false;
 
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
@@ -47,35 +41,18 @@ export const getRsamData = async () => {
         ? 2
         : 0;
   });
-  const median = findMedian(mepasJSON.map((x) => x[1]));
 
-  const dailyDb = await JSONFilePreset<any[]>(
-    path.resolve(process.cwd(), `./data/${dayjs().format("YYYY-MM-DD_HH")}`),
-    []
-  );
+  const sum = mepasJSON.map((x) => x[1]).reduce((a, b) => a + b, 0);
+  const value = mepas/sum
 
-  await dailyDb.update((events) => {
-    events.push({
-      date,
-      mepas,
-      median,
-      status: mepas > median * 3,
-      data: mepasJSON.map(x => x[1]),
-    });
-  });
-
-  if (!eventInProgress && mepas > median * 3) {
-    eventInProgress = true
+  if (value > 0.35) {
     await eventsDb.update((events) => {
-      events.push({
+      events.unshift({
         date,
-        mepas,
-        median,
+        value,
+        threshold: 0.35,
+        data: mepasJSON.map((x) => x[1])
       });
     });
-
-    setTimeout(() => {
-      eventInProgress = false
-    }, 1000 * 10);
   }
 };

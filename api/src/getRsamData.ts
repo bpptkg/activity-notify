@@ -46,6 +46,10 @@ export const getRsamData = async () => {
   const sum = mepasJSON.map((x) => x[1]).reduce((a, b) => a + b, 0);
   const value = mepas / sum;
 
+  if (value <= 0.2) {
+    eventInProgress = false;
+  }
+
   if (!eventInProgress && value > 0.35) {
     eventInProgress = true;
 
@@ -57,9 +61,5 @@ export const getRsamData = async () => {
         data: mepasJSON.map((x) => x[1]),
       });
     });
-
-    setTimeout(() => {
-      eventInProgress = false;
-    }, 1000 * 10);
   }
 };

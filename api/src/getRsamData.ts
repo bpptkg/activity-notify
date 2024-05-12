@@ -1,4 +1,4 @@
-import { eventsDb, memoryDb } from "./db";
+import { memoryDb } from "./db";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -9,7 +9,6 @@ const csvToJSON = (csv: string): [string, number][] =>
       return [row[0], Math.abs(Number(row[1]))];
     });
 
-let eventInProgress = false;
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
@@ -27,8 +26,7 @@ export const getRsamData = async () => {
   const date = mepasJSON[mepasJSON.length - 1][0];
 
   if (Number.isNaN(mepas)) {
-    console.log("IS NAN");
-    console.log(mepasRawVal);
+    return
   }
 
   memoryDb.update((data) => {
@@ -42,24 +40,4 @@ export const getRsamData = async () => {
         ? 2
         : 0;
   });
-
-  const sum = mepasJSON.map((x) => x[1]).reduce((a, b) => a + b, 0);
-  const value = mepas / sum;
-
-  if (value <= 0.2) {
-    eventInProgress = false;
-  }
-
-  if (!eventInProgress && value > 0.35) {
-    eventInProgress = true;
-
-    await eventsDb.update((events) => {
-      events.unshift({
-        date,
-        value,
-        threshold: 0.35,
-        data: mepasJSON.map((x) => x[1]),
-      });
-    });
-  }
 };

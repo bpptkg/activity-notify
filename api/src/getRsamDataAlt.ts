@@ -32,10 +32,10 @@ export const getRsamDataAlt = async () => {
   const last30Data = mepasJSON.map((x) => x[1]).slice(-30);
   const medianLast30Data = findMedian(last30Data);
 
-  const last10Data = last30Data.slice(-10);
-  const avgLast10Data = last10Data.reduce((a, b) => a + b, 0) / last10Data.length;
+  const last2Data = last30Data.slice(-2);
+  const avgLast2Data = last2Data.reduce((a, b) => a + b, 0) / last2Data.length;
 
-  const value = avgLast10Data / medianLast30Data
+  const value = avgLast2Data / medianLast30Data
 
   if (value <= 1) {
     eventInProgress = false;

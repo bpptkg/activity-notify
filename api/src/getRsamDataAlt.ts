@@ -15,7 +15,7 @@ export const getRsamDataAlt = async () => {
   const [mepasRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00"].map(async (code) => {
       const response = await fetch(
-        `http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0005&rsamP=1&tz=Asia/Jakarta&csv=1`
+        `http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0005&rsamP=1&tz=Asia/Jakarta&csv=1&ds=1`
       );
       return response.text();
     })
@@ -32,7 +32,7 @@ export const getRsamDataAlt = async () => {
   const last30Data = mepasJSON.map((x) => x[1]).slice(-30);
   const medianLast30Data = findMedian(last30Data);
 
-  const lastMeanData = last30Data.slice(-3);
+  const lastMeanData = last30Data.slice(-2);
   const avgLastMeanData = lastMeanData.reduce((a, b) => a + b, 0) / lastMeanData.length;
 
   const value = avgLastMeanData / medianLast30Data

@@ -10,6 +10,8 @@ const csvToJSON = (csv: string): [string, number][] =>
     });
 
 export const getRsamData = async () => {
+  const prevAlertType = memoryDb.data.alertType;
+
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
       const response = await fetch(
@@ -36,7 +38,7 @@ export const getRsamData = async () => {
       ? 2
       : 0;
 
-  memoryDb.update(async (data) => {
+  await memoryDb.update(async (data) => {
     data.mepas = mepas;
     data.melab = melab;
     data.date = date;
@@ -48,7 +50,7 @@ export const getRsamData = async () => {
     delay = true
     setTimeout(() => {
       delay = false  
-    }, 30);
+    }, 10);
 
     const message =
       2 === alertType

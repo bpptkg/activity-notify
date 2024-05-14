@@ -21,31 +21,36 @@ export const getRsamData = async () => {
 
   const mepasJSON = csvToJSON(mepasRawVal);
   const melabJSON = csvToJSON(melabRawVal);
-  const mepas = mepasJSON[mepasJSON.length - 1][1];
-  const melab = melabJSON[melabJSON.length - 1][1];
+  const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
+  const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
   const date = mepasJSON[mepasJSON.length - 1][0];
 
   if (Number.isNaN(mepas)) {
     return;
   }
 
-  memoryDb.update((data) => {
-    data.mepas = Math.round(mepas);
-    data.melab = Math.round(melab);
+  const alertType =
+    mepas > 5000 && mepas / melab < 2
+      ? 1
+      : mepas > 50000 && mepas / melab > 2
+      ? 2
+      : 0;
+
+  memoryDb.update(async (data) => {
+    data.mepas = mepas;
+    data.melab = melab;
     data.date = date;
-    data.alertType =
-      mepas > 5000 && mepas / melab < 2
-        ? 1
-        : mepas > 50000 && mepas / melab > 2
-        ? 2
-        : 0;
+    data.alertType = alertType;
+  });
 
-    if (data.alertType === 1 || data.alertType === 2) {
-      const message = 1
-        ? `Nilai RSAM ${mepas} <br> Waspadai APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${date}</span>`
-        : `Nilai RSAM ${mepas} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${date}</span>`;
+  if (alertType === 1 || alertType === 2) {
+    const message =
+      2 === alertType
+        ? `Nilai RSAM **${mepas}**\nTerjadi Gempa VT Kuat \n**${date}**`
+        : `Nilai RSAM **${mepas}**\nWaspadai APG > 1KM \n**${date}**`;
 
-      fetch(
+    try {
+      await fetch(
         `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`,
         {
           method: "POST",
@@ -55,14 +60,27 @@ export const getRsamData = async () => {
           body: JSON.stringify({
             chat_id: "-1002026839953",
             text: message,
+            parse_mode: "Markdown"
           }),
         }
-      ).then(() => {
-        console.log("notification send to telegram");
-      }).catch((err) => {
-        console.log("faild to send notification to telegram");
-        console.log(err);
-      });
+      );
+
+      const photoResponse = await fetch(`http://192.168.0.47:10001/cctvs/capture/JUR`)
+      const photo = await photoResponse.blob()
+
+      const form = new FormData();
+      form.append("photo", photo);
+
+      const res= await fetch(
+        `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto?chat_id=-1002026839953`,
+        {
+          method: "POST",
+          body: form,
+        }
+      );
+    } catch (error) {
+      console.log("faild to send notification to telegram");
+      console.log(error);
     }
-  });
+  }
 };

@@ -26,7 +26,7 @@ export const getRsamData = async () => {
   const date = mepasJSON[mepasJSON.length - 1][0];
 
   if (Number.isNaN(mepas)) {
-    return
+    return;
   }
 
   memoryDb.update((data) => {
@@ -39,5 +39,30 @@ export const getRsamData = async () => {
         : mepas > 50000 && mepas / melab > 2
         ? 2
         : 0;
+
+    if (data.alertType === 1 || data.alertType === 2) {
+      const message = 1
+        ? `Nilai RSAM ${mepas} <br> Waspadai APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${date}</span>`
+        : `Nilai RSAM ${mepas} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${date}</span>`;
+
+      fetch(
+        `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: "-1002026839953",
+            text: message,
+          }),
+        }
+      ).then(() => {
+        console.log("notification send to telegram");
+      }).catch((err) => {
+        console.log("faild to send notification to telegram");
+        console.log(err);
+      });
+    }
   });
 };

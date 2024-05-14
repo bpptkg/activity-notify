@@ -32,10 +32,10 @@ export const getRsamDataAlt = async () => {
   const last30Data = mepasJSON.map((x) => x[1]).slice(-30);
   const medianLast30Data = findMedian(last30Data);
 
-  const last2Data = last30Data.slice(-2);
-  const avgLast2Data = last2Data.reduce((a, b) => a + b, 0) / last2Data.length;
+  const lastMeanData = last30Data.slice(-3);
+  const avgLastMeanData = lastMeanData.reduce((a, b) => a + b, 0) / lastMeanData.length;
 
-  const value = avgLast2Data / medianLast30Data
+  const value = avgLastMeanData / medianLast30Data
 
   if (value <= 1) {
     eventInProgress = false;
@@ -48,6 +48,8 @@ export const getRsamDataAlt = async () => {
       events.unshift({
         date,
         value,
+        last30Data,
+        lastMeanData,
         data: mepasJSON.map((x) => [x[0], x[1]]),
       });
     });

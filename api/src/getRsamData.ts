@@ -43,7 +43,13 @@ export const getRsamData = async () => {
     data.alertType = alertType;
   });
 
-  if (alertType === 1 || alertType === 2) {
+  let delay = false
+  if ((alertType === 1 || alertType === 2) && !delay) {
+    delay = true
+    setTimeout(() => {
+      delay = false  
+    }, 30);
+
     const message =
       2 === alertType
         ? `Nilai RSAM **${mepas}**\nTerjadi Gempa VT Kuat \n**${date}**`
@@ -64,7 +70,12 @@ export const getRsamData = async () => {
           }),
         }
       );
+    } catch (error) {
+      console.log("faild to send notification to telegram");
+      console.log(error);
+    }
 
+    try {
       const photoResponse = await fetch(`http://192.168.0.47:10001/cctvs/capture/JUR`)
       const photo = await photoResponse.blob()
 
@@ -79,7 +90,7 @@ export const getRsamData = async () => {
         }
       );
     } catch (error) {
-      console.log("faild to send notification to telegram");
+      console.log("faild to send photo notification to telegram");
       console.log(error);
     }
   }

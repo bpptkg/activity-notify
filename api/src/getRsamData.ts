@@ -32,9 +32,9 @@ export const getRsamData = async () => {
   }
 
   const alertType =
-    mepas > 5000 && mepas / melab < 2
+    mepas > 40000 && mepas / melab < 2
       ? 1
-      : mepas > 50000 && mepas / melab > 2
+      : mepas > 40000 && mepas / melab > 2
       ? 2
       : 0;
 

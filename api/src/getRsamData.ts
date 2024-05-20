@@ -9,6 +9,8 @@ const csvToJSON = (csv: string): [string, number][] =>
       return [row[0], Math.abs(Number(row[1]))];
     });
 
+let loadingSendTelegram = false;
+
 export const getRsamData = async () => {
   const prevAlertType = memoryDb.data.alertType;
 
@@ -45,12 +47,8 @@ export const getRsamData = async () => {
     data.alertType = alertType;
   });
 
-  let delay = false
-  if ((alertType === 1 || alertType === 2) && !delay) {
-    delay = true
-    setTimeout(() => {
-      delay = false  
-    }, 10);
+  if ((alertType === 1 || alertType === 2) && !loadingSendTelegram) {
+    loadingSendTelegram = true;
 
     const message =
       2 === alertType
@@ -78,13 +76,13 @@ export const getRsamData = async () => {
     }
 
     try {
-      const photoResponse = await fetch(`http://192.168.0.47:10001/cctvs/capture/JUR`)
+      const photoResponse = await fetch(`http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`)
       const photo = await photoResponse.blob()
 
       const form = new FormData();
       form.append("photo", photo);
 
-      const res= await fetch(
+      await fetch(
         `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto?chat_id=-1002026839953`,
         {
           method: "POST",
@@ -95,5 +93,7 @@ export const getRsamData = async () => {
       console.log("faild to send photo notification to telegram");
       console.log(error);
     }
+
+    loadingSendTelegram = false;
   }
 };

@@ -10,6 +10,7 @@ const csvToJSON = (csv: string): [string, number][] =>
     });
 
 let loadingSendTelegram = false;
+
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
@@ -30,21 +31,12 @@ export const getRsamData = async () => {
     return;
   }
 
-  const prevAlertType = memoryDb.data.alertType;
-  let alertType: number
-  if (prevAlertType) {
-    if (mepas < 400) {
-      alertType = 0
-    } else {
-      alertType = prevAlertType
-    }
-  } else {
-    if (mepas > 600) {
-      alertType =  mepas / melab < 2 ? 1 : 2
-    } else {
-      alertType = 0
-    }
-  }
+  const alertType =
+    mepas > 40000 && mepas / melab < 2
+      ? 1
+      : mepas > 40000 && mepas / melab > 2
+      ? 2
+      : 0;
 
   await memoryDb.update(async (data) => {
     data.mepas = mepas;

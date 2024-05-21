@@ -4,7 +4,7 @@ import { notifyController } from "./controllers/notifyController";
 import { getRsamData } from "./getRsamData";
 import { eventController } from "./controllers/eventController";
 import { cors } from 'hono/cors'
-import { getRsamDataAlt } from "./getRsamDataAlt";
+// import { getRsamDataAlt } from "./getRsamDataAlt";
 
 const app = new Hono();
 app.use("*", cors());
@@ -13,7 +13,7 @@ app.route("events", eventController);
 
 setInterval(() => {
   getRsamData();
-  getRsamDataAlt();
+  // getRsamDataAlt();
 }, 1000);
 
 const port = 18000;

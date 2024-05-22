@@ -112,7 +112,7 @@ export const getRsamDataAlt = async () => {
   const logsDb = await JSONFilePreset<any[]>(
     path.resolve(
       process.cwd(),
-      `./data/logs-${new Date().toISOString().slice(0, 10)}.json`
+      `./data/logs-${dayjs().format("YYYY-MM-DD")}.json`
     ),
     []
   );

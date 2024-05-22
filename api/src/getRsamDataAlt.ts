@@ -1,4 +1,4 @@
-import { eventsDb, memoryDb } from "./db";
+import { eventsDb } from "./db";
 import { findMedian } from "./utils";
 
 const csvToJSON = (csv: string): [string, number][] =>
@@ -29,28 +29,21 @@ export const getRsamDataAlt = async () => {
     return
   }
 
-  const last30Data = mepasJSON.map((x) => x[1]).slice(-30);
-  const medianLast30Data = findMedian(last30Data);
+  const lastData = mepasJSON.map((x) => x[1]).slice(-3);
+  const medianLastData = findMedian(lastData);
 
-  const lastMeanData = last30Data.slice(-2);
-  const avgLastMeanData = lastMeanData.reduce((a, b) => a + b, 0) / lastMeanData.length;
-
-  const value = avgLastMeanData / medianLast30Data
-
-  if (value <= 1) {
+  if (medianLastData <= 500) {
     eventInProgress = false;
   }
 
-  if (!eventInProgress && value > 2) {
+  if (!eventInProgress && medianLastData > 1000) {
     eventInProgress = true;
 
     await eventsDb.update((events) => {
       events.unshift({
         date,
-        value,
-        last30Data,
-        lastMeanData,
-        data: mepasJSON.map((x) => [x[0], x[1]]),
+        median: medianLastData,
+        data: lastData,
       });
     });
   }

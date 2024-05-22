@@ -1,5 +1,7 @@
+import { JSONFilePreset } from "lowdb/node";
 import { eventsDb } from "./db";
 import { findMedian } from "./utils";
+import path from "path";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -47,4 +49,14 @@ export const getRsamDataAlt = async () => {
       });
     });
   }
+
+  const logsDb = await JSONFilePreset<any[]>(path.resolve(process.cwd(), `./data/logs-${new Date().toISOString().slice(0, 10)}.json`), [])
+  await logsDb.update((logs) => {
+    logs.unshift({
+      date,
+      median: medianLastData,
+      data: lastData,
+      status: eventInProgress ? true : false,
+    });
+  });
 };

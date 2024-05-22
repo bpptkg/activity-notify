@@ -1,4 +1,4 @@
-import { eventsDb, memoryDb } from "./db";
+import { memoryDb } from "./db";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -10,7 +10,6 @@ const csvToJSON = (csv: string): [string, number][] =>
     });
 
 let loadingSendTelegram = false;
-let eventInProgress = false;
 export const getRsamData = async () => {
   const [mepasRawVal, melabRawVal] = await Promise.all(
     ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
@@ -44,21 +43,6 @@ export const getRsamData = async () => {
     data.date = date;
     data.alertType = alertType;
   });
-
-  if (mepas <= 400) {
-    eventInProgress = false;
-  }
-
-  if (!eventInProgress && mepas >= 600) {
-    eventInProgress = true;
-
-    await eventsDb.update((events) => {
-      events.unshift({
-        date,
-        mepas,
-      });
-    });
-  }
 
   if ((alertType === 1 || alertType === 2) && !loadingSendTelegram) {
     loadingSendTelegram = true;

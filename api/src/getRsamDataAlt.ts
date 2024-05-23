@@ -3,6 +3,7 @@ import { eventsDb } from "./db";
 import { findMedian } from "./utils";
 import path from "path";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -55,22 +56,13 @@ export const getRsamDataAlt = async () => {
             Math.round(Date.now() - eventInProgress) / 1000
           } detik`;
 
-          const response = await fetch(
-            `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                chat_id: "-1002026839953",
-                text: message,
-                parse_mode: "Markdown",
-              }),
-            }
-          );
+          const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`, {
+            chat_id: "-1002026839953",
+            text: message,
+            parse_mode: "Markdown",
+          })
 
-          console.log("sent notification to telegram: ", await response.json());
+          console.log("sent notification to telegram: ", data);
         } catch (error) {
           console.log("faild to send notification to telegram: ", error);
         }

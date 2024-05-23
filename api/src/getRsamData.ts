@@ -46,37 +46,21 @@ export const getRsamData = async () => {
 
   if ((alertType === 1 || alertType === 2) && !loadingSendTelegram) {
     loadingSendTelegram = true;
-
-    const message =
-      2 === alertType
-        ? `Nilai RSAM **${mepas}**\nTerjadi Gempa VT Kuat \n**${date}**`
-        : `Nilai RSAM **${mepas}**\nWaspadai APG > 1KM \n**${date}**`;
-
     try {
-      await fetch(
-        `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chat_id: "-1002026839953",
-            text: message,
-            parse_mode: "Markdown"
-          }),
-        }
-      );
-    } catch (error) {
-      console.log("faild to send notification to telegram");
-      console.log(error);
-    }
-
-    try {
-      const photoResponse = await fetch(`http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`)
-      const photo = await photoResponse.blob()
-
       const form = new FormData();
+      const caption =
+        2 === alertType
+          ? `Nilai RSAM **${Math.round(mepas)}**\nTerjadi Gempa VT Kuat \n**${date}**`
+          : `Nilai RSAM **${Math.round(mepas)}**\nWaspadai APG > 1KM \n**${date}**`;
+
+      form.append("chat_id", "-1002026839953");
+      form.append("caption", caption);
+      form.append("parse_mode", "Markdown");
+
+      const photoResponse = await fetch(
+        `http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`
+      );
+      const photo = await photoResponse.blob();
       form.append("photo", photo);
 
       await fetch(
@@ -87,8 +71,7 @@ export const getRsamData = async () => {
         }
       );
     } catch (error) {
-      console.log("faild to send photo notification to telegram");
-      console.log(error);
+      console.log("faild to send photo notification to telegram: ", error);
     }
 
     loadingSendTelegram = false;

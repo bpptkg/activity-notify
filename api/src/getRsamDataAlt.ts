@@ -45,39 +45,49 @@ export const getRsamDataAlt = async () => {
 
     if (medianLastData <= 500) {
       if (!loadingSendTelegram) {
-        console.log('SENDING NOTIFICATION TO TELEGRAM');
-        
-        loadingSendTelegram = true
+        console.log("SENDING NOTIFICATION TO TELEGRAM");
+
+        loadingSendTelegram = true;
+
+        // try {
+        //   const message = `Terjadi gempa:\nWaktu: ${dayjs(
+        //     eventInProgress
+        //   ).format("YYYY-MM-DD HH:mm:ss")} WIB\nRSAM: ${highRsam}\nDurasi: ${
+        //     Math.round(Date.now() - eventInProgress) / 1000
+        //   } detik`;
+
+        //   const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`, {
+        //     chat_id: "-1002026839953",
+        //     text: message,
+        //     parse_mode: "Markdown",
+        //   })
+
+        //   console.log("sent notification to telegram: ", data);
+        // } catch (error) {
+        //   console.log("faild to send notification to telegram: ", error);
+        // }
 
         try {
-          const message = `Terjadi gempa:\nWaktu: ${dayjs(
-            eventInProgress
-          ).format("YYYY-MM-DD HH:mm:ss")} WIB\nRSAM: ${highRsam}\nDurasi: ${
-            Math.round(Date.now() - eventInProgress) / 1000
-          } detik`;
+          const form = new FormData();
 
-          const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`, {
-            chat_id: "-1002026839953",
-            text: message,
-            parse_mode: "Markdown",
-          })
-
-          console.log("sent notification to telegram: ", data);
-        } catch (error) {
-          console.log("faild to send notification to telegram: ", error);
-        }
-
-        try {
           const photoResponse = await fetch(
             `http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`
           );
           const photo = await photoResponse.blob();
 
-          const form = new FormData();
+          const caption = `Terjadi gempa:\nWaktu: ${dayjs(
+            eventInProgress
+          ).format("YYYY-MM-DD HH:mm:ss")} WIB\nRSAM: ${highRsam}\nDurasi: ${
+            Math.round(Date.now() - eventInProgress) / 1000
+          } detik`;
+
+          form.append("chat_id", '-1002026839953');
           form.append("photo", photo);
+          form.append("caption", caption);
+          form.append("parse_mode", "Markdown");
 
           const response = await fetch(
-            `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto?chat_id=-1002026839953`,
+            `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto`,
             {
               method: "POST",
               body: form,

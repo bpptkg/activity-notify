@@ -50,8 +50,8 @@ export const getRsamDataAlt = async () => {
           const form = new FormData();
           const caption = `Terjadi gempa:\nWaktu: ${dayjs(
             eventInProgress
-          ).format("YYYY-MM-DD HH:mm:ss")} WIB\nRSAM: ${highRsam}\nDurasi: ${
-            Math.round(Date.now() - eventInProgress) / 1000
+          ).format("YYYY-MM-DD HH:mm:ss")} WIB\nRSAM: ${Math.round(highRsam)}\nDurasi: ${
+            Math.round((Date.now() - eventInProgress) / 1000)
           } detik`;
           form.append("chat_id", '-1002026839953');
           form.append("caption", caption);

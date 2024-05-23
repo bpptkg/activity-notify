@@ -44,6 +44,8 @@ export const getRsamDataAlt = async () => {
 
     if (medianLastData <= 500) {
       if (!loadingSendTelegram) {
+        console.log('SENDING NOTIFICATION TO TELEGRAM');
+        
         loadingSendTelegram = true
 
         try {

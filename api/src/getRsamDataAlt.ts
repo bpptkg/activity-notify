@@ -44,6 +44,8 @@ export const getRsamDataAlt = async () => {
 
     if (medianLastData <= 500) {
       if (!loadingSendTelegram) {
+        loadingSendTelegram = true
+
         try {
           const message = `Terjadi gempa:\nWaktu: ${dayjs(
             eventInProgress
@@ -51,7 +53,7 @@ export const getRsamDataAlt = async () => {
             Math.round(Date.now() - eventInProgress) / 1000
           } detik`;
 
-          await fetch(
+          const response = await fetch(
             `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendMessage`,
             {
               method: "POST",
@@ -65,6 +67,8 @@ export const getRsamDataAlt = async () => {
               }),
             }
           );
+
+          console.log("sent notification to telegram: ", await response.json());
         } catch (error) {
           console.log("faild to send notification to telegram: ", error);
         }
@@ -78,13 +82,14 @@ export const getRsamDataAlt = async () => {
           const form = new FormData();
           form.append("photo", photo);
 
-          await fetch(
+          const response = await fetch(
             `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto?chat_id=-1002026839953`,
             {
               method: "POST",
               body: form,
             }
           );
+          console.log("sent notification to telegram: ", await response.json());
         } catch (error) {
           console.log("faild to send photo notification to telegram: ", error);
         }

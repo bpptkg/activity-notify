@@ -43,7 +43,7 @@ export const getRsamDataAlt = async () => {
       highRsam = medianLastData;
     }
 
-    if (medianLastData <= 500) {
+    if (medianLastData <= 750) {
       if (!loadingSendTelegram) {
         loadingSendTelegram = true;
         try {

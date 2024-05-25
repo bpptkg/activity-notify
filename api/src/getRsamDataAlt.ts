@@ -95,19 +95,19 @@ export const getRsamDataAlt = async () => {
     }
   }
 
-  const logsDb = await JSONFilePreset<any[]>(
-    path.resolve(
-      process.cwd(),
-      `./data/logs-${dayjs().format("YYYY-MM-DD")}.json`
-    ),
-    []
-  );
-  await logsDb.update((logs) => {
-    logs.unshift({
-      date,
-      median: medianLastData,
-      data: lastData,
-      status: eventInProgress ? true : false,
-    });
-  });
+  // const logsDb = await JSONFilePreset<any[]>(
+  //   path.resolve(
+  //     process.cwd(),
+  //     `./data/logs-${dayjs().format("YYYY-MM-DD")}.json`
+  //   ),
+  //   []
+  // );
+  // await logsDb.update((logs) => {
+  //   logs.unshift({
+  //     date,
+  //     median: medianLastData,
+  //     data: lastData,
+  //     status: eventInProgress ? true : false,
+  //   });
+  // });
 };

@@ -16,7 +16,7 @@ loc = '00' # Since obspy doesn't take location codes, this only affects the file
 day = UTCDateTime.now().strftime('%d')
 i = 1
 # fn = 'data/%s.D.%s' % (sta,day)
-fn = 'data/D.%s' % (day)
+fn = '/app/data/D.%s' % (day)
 # fn = 'data/%s.%s.%s.%s.D.%s' % (net, sta, loc, cha, day)
 # fn = 'data/out'
 
@@ -60,7 +60,7 @@ class MyClient(EasySeedLinkClient):
 		i += 1
 		if (day != UTCDateTime.now().strftime('%d')):
 			day = UTCDateTime.now().strftime('%d')
-			fn = 'D.%s' % (day)
+			fn = '/app/data/D.%s' % (day)
 			# fn = "out"
 			i = 1
 		# if (traces.Stats.npts>3600):

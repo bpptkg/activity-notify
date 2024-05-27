@@ -70,7 +70,7 @@ export const calculateEvent = async ({
     if (medianLastData > 1000) {
       eventInProgress = Date.now();
       highRsam = medianLastData;
-      const ratio = mepas / melab
+      const ratio = Math.round(mepas / melab * Math.pow(10, 2)) / Math.pow(10, 2);
       isRf = ratio <= 2;
       event = {
         date,

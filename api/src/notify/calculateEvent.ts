@@ -49,7 +49,7 @@ export const calculateEvent = async ({
           form.append("parse_mode", "Markdown");
   
           if (isRf) {
-            await plotStream(date, form);
+            await plotStream(event!.date, form);
           }
   
           const { data } = await axios.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/${

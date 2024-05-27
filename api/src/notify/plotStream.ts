@@ -11,9 +11,6 @@ dayjs.extend(utc)
 export const plotStream = async (date: string, form: FormData) => {
   try {
     const now = dayjs(date).subtract(7, 'h').format('YYYYMMDDHHmmss');
-
-    console.log(now);
-    
     const { stdout, stderr } = await execPromise(
       `${path.resolve(process.cwd(), ".venv/bin/python3")} ${path.resolve(
         process.cwd(),

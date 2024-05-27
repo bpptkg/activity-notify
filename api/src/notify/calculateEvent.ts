@@ -11,6 +11,7 @@ import axios from "axios";
 let eventInProgress = 0;
 let highRsam = 0;
 let isRf = false;
+let event: {date: string, median: number, data: number[], ratio: number, high?: number} | null = null;
 export const calculateEvent = async ({
   mepasJSON,
   melabJSON,
@@ -30,31 +31,38 @@ export const calculateEvent = async ({
     }
 
     if (medianLastData <= 750) {
-      try {
-        const form = new FormData();
-        const caption = `Terjadi gempa:\nWaktu: ${dayjs(eventInProgress).format(
-          "YYYY-MM-DD HH:mm:ss"
-        )} WIB\nRSAM: ${Math.round(highRsam)}\nDurasi: ${Math.round(
-          (Date.now() - eventInProgress) / 1000
-        )} detik`;
-        form.append("chat_id", "-1002026839953");
-        form.append(isRf ? "caption" : "text", caption);
-        form.append("parse_mode", "Markdown");
-
-        if (isRf) {
-          await plotStream(date, form);
+      const duration = Math.round((Date.now() - eventInProgress) / 1000)
+      if ((event!.median > 2500 && duration > 10) || (event!.median <= 2500 && duration > 25)) {
+        await eventsDb.update((events) => {
+          events.unshift(event);
+        });
+  
+        try {
+          const form = new FormData();
+          const caption = `Terjadi gempa:\nWaktu: ${dayjs(eventInProgress).format(
+            "YYYY-MM-DD HH:mm:ss"
+          )} WIB\nRSAM: ${Math.round(highRsam)}\nDurasi: ${Math.round(
+            (Date.now() - eventInProgress) / 1000
+          )} detik`;
+          form.append("chat_id", "-1002026839953");
+          form.append(isRf ? "caption" : "text", caption);
+          form.append("parse_mode", "Markdown");
+  
+          if (isRf) {
+            await plotStream(date, form);
+          }
+  
+          const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/${
+            isRf ? "sendPhoto" : "sendMessage"
+          }`, form)
+          console.log("sent notification to telegram: ", data);
+  
+          if (isRf) {
+            sendCctv()
+          }
+        } catch (error) {
+          console.log("faild to send photo notification to telegram: ", error);
         }
-
-        const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/${
-          isRf ? "sendPhoto" : "sendMessage"
-        }`, form)
-        console.log("sent notification to telegram: ", data);
-
-        if (isRf) {
-          sendCctv()
-        }
-      } catch (error) {
-        console.log("faild to send photo notification to telegram: ", error);
       }
 
       highRsam = 0;
@@ -65,14 +73,14 @@ export const calculateEvent = async ({
     if (medianLastData > 1000) {
       eventInProgress = Date.now();
       highRsam = medianLastData;
-      isRf = mepas / melab <= 2;
-      await eventsDb.update((events) => {
-        events.unshift({
-          date,
-          median: medianLastData,
-          data: lastData,
-        });
-      });
+      const ratio = mepas / melab
+      isRf = ratio <= 2;
+      event = {
+        date,
+        median: medianLastData,
+        data: lastData,
+        ratio,
+      }
     }
   }
 

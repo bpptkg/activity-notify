@@ -90,7 +90,7 @@ export const calculateEvent = async ({
     const logsDb = await JSONFilePreset<any[]>(
       path.resolve(
         process.cwd(),
-        `./data/logs-${dayjs().format("YYYY-MM-DD-HH-mm")}.json`
+        `./data/logs-${dayjs().format("YYYY-MM-DD-HH")}.json`
       ),
       []
     );

@@ -45,7 +45,7 @@ export const calculateEvent = async ({
             (Date.now() - eventInProgress) / 1000
           )} detik\nRatio: ${event?.ratio}`;
           form.append("chat_id", "-1002026839953");
-          form.append(isRf ? "caption" : "text", caption);
+          form.append("caption", caption);
           form.append("parse_mode", "Markdown");
           await plotStream(event!.date, form);
   

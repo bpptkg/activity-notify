@@ -50,7 +50,7 @@ export const calculateApg = async ({
       form.append("photo", photo);
 
       await fetch(
-        `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto?chat_id=-1002026839953`,
+        `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto?chat_id=-1002026839953`,
         {
           method: "POST",
           body: form,

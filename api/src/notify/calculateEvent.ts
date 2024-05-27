@@ -52,7 +52,7 @@ export const calculateEvent = async ({
             await plotStream(date, form);
           }
   
-          const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/${
+          const { data } = await axios.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/${
             isRf ? "sendPhoto" : "sendMessage"
           }`, form)
           console.log("sent notification to telegram: ", data);

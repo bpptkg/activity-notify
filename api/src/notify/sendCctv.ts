@@ -8,7 +8,7 @@ export const sendCctv = async () => {
     const photo = await photoResponse.blob();
     formPhoto.append("photo", photo);
     await fetch(
-      `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/sendPhoto`,
+      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
       {
         method: "POST",
         body: formPhoto,

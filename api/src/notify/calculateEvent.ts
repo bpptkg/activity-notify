@@ -43,7 +43,7 @@ export const calculateEvent = async ({
             "YYYY-MM-DD HH:mm:ss"
           )} WIB\nRSAM: ${Math.round(highRsam)}\nDurasi: ${Math.round(
             (Date.now() - eventInProgress) / 1000
-          )} detik`;
+          )} detik\nRatio: ${event?.ratio}`;
           form.append("chat_id", "-1002026839953");
           form.append(isRf ? "caption" : "text", caption);
           form.append("parse_mode", "Markdown");

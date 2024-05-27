@@ -32,6 +32,16 @@ export const calculateEvent = async ({
 
     if (medianLastData <= 750) {
       const duration = Math.round((Date.now() - eventInProgress) / 1000)
+      const time =  dayjs(eventInProgress).format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
+      const rsam = Math.round(highRsam)
+      const localIsRf = !!isRf
+
+      highRsam = 0;
+      eventInProgress = 0;
+      isRf = false;
+
       if ((event!.median > 2500 && duration > 10) || (event!.median <= 2500 && duration > 25)) {
         await eventsDb.update((events) => {
           events.unshift(event);
@@ -39,11 +49,7 @@ export const calculateEvent = async ({
   
         try {
           const form = new FormData();
-          const caption = `Terjadi gempa:\nWaktu: ${dayjs(eventInProgress).format(
-            "YYYY-MM-DD HH:mm:ss"
-          )} WIB\nRSAM: ${Math.round(highRsam)}\nDurasi: ${Math.round(
-            (Date.now() - eventInProgress) / 1000
-          )} detik\nRatio: ${event?.ratio}`;
+          const caption = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${rsam}\nDurasi: ${duration} detik\nRatio: ${event?.ratio}`;
           form.append("chat_id", "-1002026839953");
           form.append("caption", caption);
           form.append("parse_mode", "Markdown");
@@ -52,7 +58,7 @@ export const calculateEvent = async ({
           const { data } = await axios.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`, form)
           console.log("sent notification to telegram: ", data);
   
-          if (isRf) {
+          if (localIsRf) {
             setTimeout(() => {
               sendCctv()
             }, 2000);
@@ -61,10 +67,6 @@ export const calculateEvent = async ({
           console.log("faild to send photo notification to telegram: ", error);
         }
       }
-
-      highRsam = 0;
-      eventInProgress = 0;
-      isRf = false;
     }
   } else {
     if (medianLastData > 1000) {

@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: api
+    volumes:
+      - ./api:/app
+    command: npx tsx watch src/index.ts
+  # stream:
+  #   build: 
+  #     context: stream
+  #   volumes:
+  #     - ./api/data:/app/data

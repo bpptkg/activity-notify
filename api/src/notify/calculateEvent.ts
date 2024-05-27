@@ -3,6 +3,10 @@ import { eventsDb } from "../db";
 import { findMedian } from "../utils";
 import { JSONFilePreset } from "lowdb/node";
 import path from "path";
+import { sendCctv } from "./sendCctv";
+import FormData from "form-data";
+import { plotStream } from "./plotStream";
+import axios from "axios";
 
 let eventInProgress = 0;
 let highRsam = 0;
@@ -38,23 +42,17 @@ export const calculateEvent = async ({
         form.append("parse_mode", "Markdown");
 
         if (isRf) {
-          const photoResponse = await fetch(
-            `http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`
-          );
-          const photo = await photoResponse.blob();
-          form.append("photo", photo);
+          await plotStream(date, form);
         }
 
-        const response = await fetch(
-          `https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/${
-            isRf ? "sendPhoto" : "sendMessage"
-          }`,
-          {
-            method: "POST",
-            body: form,
-          }
-        );
-        console.log("sent notification to telegram: ", await response.json());
+        const { data } = await axios.post(`https://api.telegram.org/bot6715715865:AAEchBtNy2GlrX-o3ACJQnbTjvv476jBwjY/${
+          isRf ? "sendPhoto" : "sendMessage"
+        }`, form)
+        console.log("sent notification to telegram: ", data);
+
+        if (isRf) {
+          sendCctv()
+        }
       } catch (error) {
         console.log("faild to send photo notification to telegram: ", error);
       }

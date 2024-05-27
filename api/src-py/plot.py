@@ -47,7 +47,7 @@ def plot_waveforms(eventtime,namafile1):
 
     sta = ["MEPAS","MELAB","MEDEL","MEIMO"]
     eventtime = UTCDateTime(eventtime)
-    namafile = "./data/D."+ str(eventtime.day)
+    namafile = "/app/data/D."+ str(eventtime.day)
     # namafile = "msdoutput_1.msd"
     # print(eventtime)
 

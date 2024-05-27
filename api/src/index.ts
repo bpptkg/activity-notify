@@ -18,7 +18,7 @@ setInterval(() => {
 
 setInterval(() => {
   deleteOldFiles(path.resolve(process.cwd(), `./data`));
-});
+}, 1000 * 60 * 60 * 24);
 
 const port = 18000;
 serve({

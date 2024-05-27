@@ -47,20 +47,15 @@ export const calculateEvent = async ({
           form.append("chat_id", "-1002026839953");
           form.append(isRf ? "caption" : "text", caption);
           form.append("parse_mode", "Markdown");
+          await plotStream(event!.date, form);
   
-          if (isRf) {
-            await plotStream(event!.date, form);
-          }
-  
-          const { data } = await axios.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/${
-            isRf ? "sendPhoto" : "sendMessage"
-          }`, form)
+          const { data } = await axios.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`, form)
           console.log("sent notification to telegram: ", data);
   
           if (isRf) {
             setTimeout(() => {
               sendCctv()
-            }, 3000);
+            }, 2000);
           }
         } catch (error) {
           console.log("faild to send photo notification to telegram: ", error);

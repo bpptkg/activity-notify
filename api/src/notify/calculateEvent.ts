@@ -58,7 +58,9 @@ export const calculateEvent = async ({
           console.log("sent notification to telegram: ", data);
   
           if (isRf) {
-            sendCctv()
+            setTimeout(() => {
+              sendCctv()
+            }, 3000);
           }
         } catch (error) {
           console.log("faild to send photo notification to telegram: ", error);

@@ -10,7 +10,7 @@ import { sendPlot } from "./sendPlot";
 let eventInProgress = false;
 let imageIsSent = false;
 let startTime = 0;
-let highRsam = 0;
+let highMepasRsam = 0;
 let ratio = 0;
 let event: {
   date: string;
@@ -30,22 +30,22 @@ export const calculateEvent = async ({
     return;
   }
 
-  const lastData = mepasJSON.map((x) => x[1]).slice(-3);
-  const medianLastData = findMedian(lastData);
+  const lastMepasData = mepasJSON.map((x) => x[1]).slice(-3);
+  const medianLastMepasData = findMedian(lastMepasData);
   const date = mepasJSON[mepasJSON.length - 1][0];
   const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
 
   if (startTime) {
-    if (highRsam < medianLastData) {
-      highRsam = medianLastData;
+    if (highMepasRsam < medianLastMepasData) {
+      highMepasRsam = medianLastMepasData;
       Math.round((mepas / melab) * Math.pow(10, 2)) / Math.pow(10, 2)
     }
 
     const time = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss");
     const duration = Math.round((Date.now() - startTime) / 1000);
-    if (medianLastData <= 750) {
-      const rsam = Math.round(highRsam);
+    if (medianLastMepasData <= 750) {
+      const rsam = Math.round(highMepasRsam);
 
       if (
         (event!.median > 2500 && duration > 10) ||
@@ -67,7 +67,7 @@ export const calculateEvent = async ({
         eventInProgress = false;
       }
 
-      highRsam = 0;
+      highMepasRsam = 0;
       startTime = 0;
     } else {
       if (duration > 35 && !imageIsSent) {
@@ -81,16 +81,16 @@ export const calculateEvent = async ({
       }
     }
   } else {
-    if (medianLastData > 1000) {
+    if (medianLastMepasData > 1000) {
       eventInProgress = true;
       startTime = Date.now();
-      highRsam = medianLastData;
+      highMepasRsam = medianLastMepasData;
       ratio =
         Math.round((mepas / melab) * Math.pow(10, 2)) / Math.pow(10, 2);
       event = {
         date,
-        median: medianLastData,
-        data: lastData,
+        median: medianLastMepasData,
+        data: lastMepasData,
         ratio,
       };
     }
@@ -108,8 +108,8 @@ export const calculateEvent = async ({
     await logsDb.update((logs) => {
       logs.unshift({
         date,
-        median: medianLastData,
-        data: lastData,
+        median: medianLastMepasData,
+        data: lastMepasData,
       });
     });
   } catch (error) {

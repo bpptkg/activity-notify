@@ -54,7 +54,7 @@ export const calculateEvent = async ({
             events.unshift({
               date,
               median: highMepasRsam,
-              ratio
+              ratio,
             });
           });
           await sendEvent(ratio, duration, time, mepasRsam);
@@ -86,11 +86,16 @@ export const calculateEvent = async ({
     }
   } else {
     if (medianLastMepasData > 1000) {
-      sendingMessageInProgress = true;
-      eventInProgress = true;
-      highMepasRsam = medianLastMepasData;
-      highMelabRsam = medianLastMelabData;
-      date = mepasJSON[mepasJSON.length - 1][0];
+      const lastMepas10Data = mepasJSON.map((x) => x[1]).slice(-10);
+      const medianLast10MepasData = Math.round(findMedian(lastMepas10Data));
+
+      if (medianLastMepasData / medianLast10MepasData > 3) {
+        sendingMessageInProgress = true;
+        eventInProgress = true;
+        highMepasRsam = medianLastMepasData;
+        highMelabRsam = medianLastMelabData;
+        date = mepasJSON[mepasJSON.length - 1][0];
+      }
     }
   }
 };

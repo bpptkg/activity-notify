@@ -11,6 +11,7 @@ let eventInProgress = false;
 let imageIsSent = false;
 let startTime = 0;
 let highRsam = 0;
+let ratio = 0;
 let event: {
   date: string;
   median: number;
@@ -38,6 +39,7 @@ export const calculateEvent = async ({
   if (startTime) {
     if (highRsam < medianLastData) {
       highRsam = medianLastData;
+      Math.round((mepas / melab) * Math.pow(10, 2)) / Math.pow(10, 2)
     }
 
     const time = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss");
@@ -83,7 +85,7 @@ export const calculateEvent = async ({
       eventInProgress = true;
       startTime = Date.now();
       highRsam = medianLastData;
-      const ratio =
+      ratio =
         Math.round((mepas / melab) * Math.pow(10, 2)) / Math.pow(10, 2);
       event = {
         date,

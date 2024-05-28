@@ -15,10 +15,6 @@ export const sendPlot = async (date: string) => {
       form
     );
     console.log("sent notification to telegram: ", data);
-
-    setTimeout(() => {
-      sendCctv();
-    }, 2000);
   } catch (error) {
     console.log("faild to send photo notification to telegram: ", error);
   }

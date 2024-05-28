@@ -4,9 +4,8 @@ import { findMedian } from "../utils";
 import { JSONFilePreset } from "lowdb/node";
 import path from "path";
 import { sendCctv } from "./sendCctv";
-import FormData from "form-data";
-import { plotStream } from "./plotStream";
-import axios from "axios";
+import { sendEvent } from "./sendEvent";
+import { sendPlot } from "./sendPlot";
 
 let eventInProgress = false;
 let startTime = 0;
@@ -41,9 +40,9 @@ export const calculateEvent = async ({
       highRsam = medianLastData;
     }
 
+    const time = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss");
     if (medianLastData <= 750) {
       const duration = Math.round((Date.now() - startTime) / 1000);
-      const time = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss");
       const rsam = Math.round(highRsam);
 
       if (
@@ -55,27 +54,11 @@ export const calculateEvent = async ({
           await eventsDb.update((events) => {
             events.unshift(event);
           });
-
-          const form = new FormData();
-          const caption = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${rsam}\nDurasi: ${duration} detik\nRatio: ${event?.ratio}`;
-          form.append("chat_id", "-1002026839953");
-          form.append("caption", caption);
-          form.append("parse_mode", "Markdown");
-          await plotStream(event!.date, form);
-
-          const { data } = await axios.post(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
-            form
-          );
-          console.log("sent notification to telegram: ", data);
-
-          if (isRf) {
-            setTimeout(() => {
-              sendCctv();
-            }, 2000);
-          }
+          await sendEvent(event!, duration, time, rsam);
+          await sendPlot(event!.date);
+          await sendCctv();
         } catch (error) {
-          console.log("faild to send photo notification to telegram: ", error);
+          console.error(error);
         }
         eventInProgress = false
       }
@@ -83,6 +66,10 @@ export const calculateEvent = async ({
       highRsam = 0;
       startTime = 0;
       isRf = false;
+    } else {
+      // if (condition) {
+        
+      // }
     }
   } else {
     if (medianLastData > 1000) {

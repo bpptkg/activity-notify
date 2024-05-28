@@ -8,6 +8,7 @@ import { sendEvent } from "./sendEvent";
 import { sendPlot } from "./sendPlot";
 
 let eventInProgress = false;
+let imageIsSent = false;
 let startTime = 0;
 let highRsam = 0;
 let event: {
@@ -25,7 +26,7 @@ export const calculateEvent = async ({
   melabJSON: [string, number][];
 }) => {
   if (eventInProgress) {
-    return
+    return;
   }
 
   const lastData = mepasJSON.map((x) => x[1]).slice(-3);
@@ -40,34 +41,42 @@ export const calculateEvent = async ({
     }
 
     const time = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss");
+    const duration = Math.round((Date.now() - startTime) / 1000);
     if (medianLastData <= 750) {
-      const duration = Math.round((Date.now() - startTime) / 1000);
       const rsam = Math.round(highRsam);
 
       if (
         (event!.median > 2500 && duration > 10) ||
         (event!.median <= 2500 && duration > 25)
       ) {
-        eventInProgress = true
+        eventInProgress = true;
         try {
           await eventsDb.update((events) => {
             events.unshift(event);
           });
           await sendEvent(event!, duration, time, rsam);
-          await sendPlot(event!.date);
-          await sendCctv();
+          if (!imageIsSent) {
+            await sendPlot(event!.date);
+            await sendCctv();
+          }
         } catch (error) {
           console.error(error);
         }
-        eventInProgress = false
+        eventInProgress = false;
       }
 
       highRsam = 0;
       startTime = 0;
     } else {
-      // if (condition) {
-        
-      // }
+      if (duration > 35 && !imageIsSent) {
+        imageIsSent = true;
+        try {
+          await sendPlot(event!.date);
+          await sendCctv();
+        } catch (error) {
+          imageIsSent = false;
+        }
+      }
     }
   } else {
     if (medianLastData > 1000) {

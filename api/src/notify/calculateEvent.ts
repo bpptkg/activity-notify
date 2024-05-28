@@ -10,7 +10,6 @@ import { sendPlot } from "./sendPlot";
 let eventInProgress = false;
 let startTime = 0;
 let highRsam = 0;
-let isRf = false;
 let event: {
   date: string;
   median: number;
@@ -65,7 +64,6 @@ export const calculateEvent = async ({
 
       highRsam = 0;
       startTime = 0;
-      isRf = false;
     } else {
       // if (condition) {
         
@@ -78,7 +76,6 @@ export const calculateEvent = async ({
       highRsam = medianLastData;
       const ratio =
         Math.round((mepas / melab) * Math.pow(10, 2)) / Math.pow(10, 2);
-      isRf = ratio <= 2;
       event = {
         date,
         median: medianLastData,

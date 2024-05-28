@@ -2,13 +2,13 @@ import FormData from "form-data";
 import axios from "axios";
 
 export const sendEvent = async (
-  event: { date: string, ratio: number },
+  ratio: number,
   duration: number,
   time: string,
-  rsam: number
+  mepasRsam: number
 ) => {
   const form = new FormData();
-  const caption = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${rsam}\nDurasi: ${duration} detik\nRatio: ${event?.ratio}`;
+  const caption = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${mepasRsam}\nDurasi: ${duration} detik\nRatio: ${ratio}`;
   form.append("chat_id", "-1002026839953");
   form.append("caption", caption);
   form.append("parse_mode", "Markdown");

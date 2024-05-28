@@ -30,7 +30,7 @@ export const calculateApg = async ({
     eventInProgress = true;
     try {
       const form = new FormData();
-      const caption =
+      const text =
         2 === alertType
           ? `Nilai RSAM **${Math.round(
               mepas
@@ -40,17 +40,11 @@ export const calculateApg = async ({
             )}**\nWaspadai APG > 1KM \n**${date}**`;
 
       form.append("chat_id", "-1002026839953");
-      form.append("caption", caption);
+      form.append("text", text);
       form.append("parse_mode", "Markdown");
 
-      const photoResponse = await fetch(
-        `http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`
-      );
-      const photo = await photoResponse.blob();
-      form.append("photo", photo);
-
       await fetch(
-        `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto?chat_id=-1002026839953`,
+        `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
         {
           method: "POST",
           body: form,

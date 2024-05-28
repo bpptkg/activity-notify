@@ -86,7 +86,6 @@ export const calculateEvent = async ({
     }
   } else {
     if (medianLastMepasData > 1000) {
-      sendingMessageInProgress = true;
       eventInProgress = true;
       highMepasRsam = medianLastMepasData;
       highMelabRsam = medianLastMelabData;

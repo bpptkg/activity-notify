@@ -86,16 +86,11 @@ export const calculateEvent = async ({
     }
   } else {
     if (medianLastMepasData > 1000) {
-      const lastMepas10Data = mepasJSON.map((x) => x[1]).slice(-10);
-      const medianLast10MepasData = Math.round(findMedian(lastMepas10Data));
-
-      if (medianLastMepasData / medianLast10MepasData > 3) {
-        sendingMessageInProgress = true;
-        eventInProgress = true;
-        highMepasRsam = medianLastMepasData;
-        highMelabRsam = medianLastMelabData;
-        date = mepasJSON[mepasJSON.length - 1][0];
-      }
+      sendingMessageInProgress = true;
+      eventInProgress = true;
+      highMepasRsam = medianLastMepasData;
+      highMelabRsam = medianLastMelabData;
+      date = mepasJSON[mepasJSON.length - 1][0];
     }
   }
 };

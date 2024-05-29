@@ -90,7 +90,7 @@ export const calculateEvent = async ({
       }
     }
   } else {
-    if (medianLastMepasData > 1000) {
+    if (medianLastMepasData > 3000) {
       incrementDb.update((data) => {
         data.i = data.i + 1;
       })

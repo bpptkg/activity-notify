@@ -11,6 +11,7 @@ let eventInProgress = false;
 let date = "";
 let highMepasRsam = 0;
 let highMelabRsam = 0;
+let ratio = 0;
 export const calculateEvent = async ({
   mepasJSON,
   melabJSON,
@@ -28,18 +29,19 @@ export const calculateEvent = async ({
   const medianLastMelabData = Math.round(findMedian(lastMelabData));
 
   if (eventInProgress) {
-    if (highMepasRsam < medianLastMepasData) {
+    const time = dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+    const duration = Math.round((Date.now() - dayjs(date).valueOf()) / 1000);
+
+    if (duration <= 30 && highMepasRsam < medianLastMepasData) {
       highMepasRsam = medianLastMepasData;
     }
-    if (highMelabRsam < medianLastMelabData) {
+    if (duration <= 30 && highMelabRsam < medianLastMelabData) {
       highMelabRsam = medianLastMelabData;
     }
 
-    const ratio =
+    ratio =
       Math.round((highMepasRsam / highMelabRsam) * Math.pow(10, 2)) /
       Math.pow(10, 2);
-    const time = dayjs(date).format("YYYY-MM-DD HH:mm:ss");
-    const duration = Math.round((Date.now() - dayjs(date).valueOf()) / 1000);
 
     const id = incrementDb.data.i
 
@@ -75,6 +77,7 @@ export const calculateEvent = async ({
       date = "";
       highMepasRsam = 0;
       highMelabRsam = 0;
+      ratio = 0;
     } else {
       if (duration > 35 && !imageIsSent) {
         imageIsSent = true;

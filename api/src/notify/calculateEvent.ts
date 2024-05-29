@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { eventsDb } from "../db";
+import { eventsDb, incrementDb } from "../db";
 import { findMedian } from "../utils";
 import { sendCctv } from "./sendCctv";
 import { sendEvent } from "./sendEvent";
@@ -41,6 +41,8 @@ export const calculateEvent = async ({
     const time = dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     const duration = Math.round((Date.now() - dayjs(date).valueOf()) / 1000);
 
+    const id = incrementDb.data.i
+
     if (medianLastMepasData <= 750) {
       const mepasRsam = Math.round(highMepasRsam);
 
@@ -57,10 +59,10 @@ export const calculateEvent = async ({
               ratio,
             });
           });
-          await sendEvent(ratio, duration, time, mepasRsam);
+          await sendEvent(ratio, duration, time, mepasRsam, `#${id}`);
           if (!imageIsSent) {
-            await sendPlot(date);
-            await sendCctv();
+            await sendPlot(date, `#${id}`);
+            await sendCctv(`#${id}`);
           }
         } catch (error) {
           console.error(error);
@@ -77,8 +79,8 @@ export const calculateEvent = async ({
       if (duration > 35 && !imageIsSent) {
         imageIsSent = true;
         try {
-          await sendPlot(date);
-          await sendCctv();
+          await sendPlot(date, `#${id}`);
+          await sendCctv(`#${id}`);
         } catch (error) {
           imageIsSent = false;
         }
@@ -86,6 +88,9 @@ export const calculateEvent = async ({
     }
   } else {
     if (medianLastMepasData > 1000) {
+      incrementDb.update((data) => {
+        data.i = data.i + 1;
+      })
       eventInProgress = true;
       highMepasRsam = medianLastMepasData;
       highMelabRsam = medianLastMelabData;

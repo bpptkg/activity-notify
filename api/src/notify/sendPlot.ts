@@ -3,10 +3,11 @@ import { plotStream } from "./plotStream";
 import axios from "axios";
 import { sendCctv } from "./sendCctv";
 
-export const sendPlot = async (date: string) => {
+export const sendPlot = async (date: string, id: string) => {
   const form = new FormData();
   form.append("chat_id", "-1002026839953");
   form.append("parse_mode", "Markdown");
+  form.append("caption", id);
 
   try {
     await plotStream(date, form);

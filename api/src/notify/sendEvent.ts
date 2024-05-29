@@ -5,10 +5,11 @@ export const sendEvent = async (
   ratio: number,
   duration: number,
   time: string,
-  mepasRsam: number
+  mepasRsam: number,
+  id: string
 ) => {
   const form = new FormData();
-  const text = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${mepasRsam}\nDurasi: ${duration} detik\nRatio: ${ratio}`;
+  const text = `Terjadi gempa:\nWaktu: ${time} WIB\nRSAM: ${mepasRsam}\nDurasi: ${duration} detik\nRatio: ${ratio}\n\n${id}`;
   form.append("chat_id", "-1002026839953");
   form.append("text", text);
   form.append("parse_mode", "Markdown");

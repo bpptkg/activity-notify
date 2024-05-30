@@ -32,16 +32,18 @@ export const calculateEvent = async ({
     const time = dayjs(date).format("YYYY-MM-DD HH:mm:ss");
     const duration = Math.round((Date.now() - dayjs(date).valueOf()) / 1000);
 
-    if (duration <= 30 && highMepasRsam < medianLastMepasData) {
+    if (highMepasRsam < medianLastMepasData) {
       highMepasRsam = medianLastMepasData;
     }
-    if (duration <= 30 && highMelabRsam < medianLastMelabData) {
+    if (highMelabRsam < medianLastMelabData) {
       highMelabRsam = medianLastMelabData;
     }
 
-    ratio =
-      Math.round((highMepasRsam / highMelabRsam) * Math.pow(10, 2)) /
-      Math.pow(10, 2);
+    if (duration <= 30) {
+      ratio =
+        Math.round((highMepasRsam / highMelabRsam) * Math.pow(10, 2)) /
+        Math.pow(10, 2);
+    }
 
     const id = incrementDb.data.i
 

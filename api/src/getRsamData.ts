@@ -1,5 +1,8 @@
+import { JSONFilePreset } from "lowdb/node";
 import { calculateApg } from "./notify/calculateApg";
 import { calculateEvent } from "./notify/calculateEvent";
+import path from "path";
+import dayjs from "dayjs";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -37,4 +40,23 @@ export const getRsamData = async () => {
       melabJSON,
     }),
   ]);
+
+  try {
+    const logsDb = await JSONFilePreset<any[]>(
+      path.resolve(
+        process.cwd(),
+        `./data/logs-${dayjs().format("YYYY-MM-DD-HH")}.json`
+      ),
+      []
+    );
+
+    await logsDb.update((logs) => {
+      logs.unshift({
+        mepasJSON,
+        melabJSON
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };

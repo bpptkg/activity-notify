@@ -1,3 +1,5 @@
+import { logger } from "../logger";
+
 export const sendCctv = async (id: string) => {
   try {
     const formPhoto = new FormData();
@@ -8,14 +10,15 @@ export const sendCctv = async (id: string) => {
     );
     const photo = await photoResponse.blob();
     formPhoto.append("photo", photo);
-    await fetch(
+    const data =  await fetch(
       `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
       {
         method: "POST",
         body: formPhoto,
       }
     );
+    logger.info("sent cctv to telegram: ", data.json());
   } catch (error) {
-    console.error('Error send cctv: ', error);
+    logger.error('failed send cctv to telegram: ', error);
   }
 };

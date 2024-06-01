@@ -4,6 +4,7 @@ import { findMedian } from "../utils";
 import { sendCctv } from "./sendCctv";
 import { sendEvent } from "./sendEvent";
 import { sendPlot } from "./sendPlot";
+import { logger } from "../logger";
 
 let sendingMessageInProgress = false;
 let imageIsSent = false;
@@ -69,7 +70,7 @@ export const calculateEvent = async ({
             await sendCctv(`#${id}`);
           }
         } catch (error) {
-          console.error(error);
+          logger.error(error);
         }
       }
 

@@ -8,7 +8,9 @@
     "dayjs": "^1.11.11",
     "form-data": "^4.0.0",
     "hono": "^4.3.2",
-    "lowdb": "^7.0.1"
+    "lowdb": "^7.0.1",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

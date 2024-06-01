@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import { plotStream } from "./plotStream";
 import axios from "axios";
-import { sendCctv } from "./sendCctv";
+import { logger } from "../logger";
 
 export const sendPlot = async (date: string, id: string) => {
   const form = new FormData();
@@ -15,8 +15,8 @@ export const sendPlot = async (date: string, id: string) => {
       `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
       form
     );
-    console.log("sent notification to telegram: ", data);
+    logger.info("sent plot to telegram: ", data);
   } catch (error) {
-    console.log("faild to send photo notification to telegram: ", error);
+    logger.info("faild to send photo plot to telegram: ", error);
   }
 };

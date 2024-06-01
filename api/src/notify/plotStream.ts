@@ -5,6 +5,7 @@ import { createReadStream } from "fs";
 import path from "path";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
+import { logger } from "../logger";
 const execPromise = promisify(exec);
 dayjs.extend(utc)
 
@@ -17,15 +18,15 @@ export const plotStream = async (date: string, form: FormData) => {
         "src-py/plot.py"
       )} ${now} /tmp/${now}.png`
     );
-    console.log(`Output: ${stdout}`);
+    logger.info(`Output: ${stdout}`);
     if (stderr) {
-      console.error(`Error output: ${stderr}`);
+      logger.error(`Error output: ${stderr}`);
     } else {
-        console.log('APPEND');
+      logger.info('APPEND');
         
       form.append("photo", createReadStream(`/tmp/${now}.png`));
     }
   } catch (error) {
-    console.error("Error plot stream: ", error);
+    logger.error("Error plot stream: ", error);
   }
 };

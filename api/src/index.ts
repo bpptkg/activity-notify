@@ -6,6 +6,7 @@ import { eventController } from "./controllers/eventController";
 import { cors } from "hono/cors";
 import { deleteOldFiles } from "./utils";
 import path from "path";
+import { logger } from "./logger";
 
 const app = new Hono();
 app.use("*", cors());
@@ -25,4 +26,4 @@ serve({
   fetch: app.fetch,
   port,
 });
-console.log(`Server is running on port ${port}`);
+logger.info(`Server is running on port ${port}`);

@@ -3,6 +3,7 @@ import { calculateApg } from "./notify/calculateApg";
 import { calculateEvent } from "./notify/calculateEvent";
 import path from "path";
 import dayjs from "dayjs";
+import { logger } from "./logger";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -60,6 +61,6 @@ export const getRsamData = async () => {
       });
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };

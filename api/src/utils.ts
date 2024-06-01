@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { logger } from "./logger";
 
 export const findMedian = (numbers: number[]) => {
   if (numbers.length === 0) throw new Error("No numbers provided");
@@ -28,7 +29,7 @@ const isOlderThan24Hours = (filePath: string) => {
 export const deleteOldFiles = (dirPath: string) => {
   fs.readdir(dirPath, (err, files) => {
     if (err) {
-      return console.log("Unable to scan directory: " + err);
+      return logger.info("Unable to scan directory: " + err);
     }
 
     files.forEach((file) => {
@@ -37,9 +38,9 @@ export const deleteOldFiles = (dirPath: string) => {
       if (file.startsWith("log-") && isOlderThan24Hours(filePath)) {
         fs.unlink(filePath, (err) => {
           if (err) {
-            console.error(`Error deleting file: ${filePath}`, err);
+            logger.error(`Error deleting file: ${filePath}`, err);
           } else {
-            console.log(`Deleted file: ${filePath}`);
+            logger.info(`Deleted file: ${filePath}`);
           }
         });
       }

@@ -1,5 +1,6 @@
 import FormData from "form-data";
 import axios from "axios";
+import { logger } from "../logger";
 
 export const sendEvent = async (
   ratio: number,
@@ -19,8 +20,8 @@ export const sendEvent = async (
         `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
         form
       );
-      console.log("sent notification to telegram: ", data);
+      logger.info("sent event to telegram: ", data);
   } catch (error) {
-    console.log("faild to send photo notification to telegram: ", error);
+    logger.info("failed to send event to telegram: ", error);
   }
 };

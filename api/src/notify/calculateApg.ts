@@ -1,4 +1,5 @@
 import { memoryDb } from "../db";
+import { logger } from "../logger";
 
 let eventInProgress = false
 export const calculateApg = async ({
@@ -51,7 +52,7 @@ export const calculateApg = async ({
         }
       );
     } catch (error) {
-      console.log("faild to send photo notification to telegram: ", error);
+      logger.log("faild to send photo notification to telegram: ", error);
     }
   }
 

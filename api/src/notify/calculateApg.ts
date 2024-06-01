@@ -13,9 +13,9 @@ export const calculateApg = async ({
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
 
   const alertType =
-    mepas > 40000 && mepas / melab < 2
+    mepas > 35000 && mepas / melab < 2
       ? 1
-      : mepas > 40000 && mepas / melab > 2
+      : mepas > 35000 && mepas / melab > 2
       ? 2
       : 0;
 

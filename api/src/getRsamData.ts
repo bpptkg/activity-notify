@@ -26,6 +26,9 @@ export const getRsamData = async () => {
   const mepasJSON = csvToJSON(mepasRawVal);
   const melabJSON = csvToJSON(melabRawVal);
 
+  mepasJSON.pop()
+  melabJSON.pop()
+
   if (Number.isNaN(mepasJSON[mepasJSON.length - 1][1])) {
     return;
   }

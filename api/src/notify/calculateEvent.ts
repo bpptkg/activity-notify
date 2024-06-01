@@ -67,7 +67,9 @@ export const calculateEvent = async ({
           await sendEvent(ratio, duration, time, mepasRsam, `#${id}`);
           if (!imageIsSent) {
             await sendPlot(date, `#${id}`);
-            await sendCctv(`#${id}`);
+            if (ratio <= 2) {
+              await sendCctv(`#${id}`);
+            }
           }
         } catch (error) {
           logger.error(error);
@@ -86,7 +88,9 @@ export const calculateEvent = async ({
         imageIsSent = true;
         try {
           await sendPlot(date, `#${id}`);
-          await sendCctv(`#${id}`);
+          if (ratio <= 2) {
+            await sendCctv(`#${id}`);
+          }
         } catch (error) {
           imageIsSent = false;
         }

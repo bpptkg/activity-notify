@@ -47,7 +47,7 @@ def plot_waveforms(eventtime,namafile1):
 
     sta = ["MEPAS","MELAB","MEDEL","MEIMO"]
     eventtime = UTCDateTime(eventtime)
-    namafile = "/app/data/D."+ str(eventtime.day)
+    namafile =  f'/app/data/{eventtime.strftime('%Y-%m-%d')}.mseed'
     # namafile = "./src-py/1.mseed"
     # print(eventtime)
 

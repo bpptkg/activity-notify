@@ -7,6 +7,8 @@ import { cors } from "hono/cors";
 import { deleteOldFiles } from "./utils";
 import path from "path";
 import { logger } from "./logger";
+import { CronJob } from 'cron';
+import { incrementDb } from "./db";
 
 const app = new Hono();
 app.use("*", cors());
@@ -20,6 +22,18 @@ setInterval(() => {
 setInterval(() => {
   deleteOldFiles(path.resolve(process.cwd(), `./data`));
 }, 1000 * 60 * 60);
+
+const job = new CronJob(
+	'0 0 * * *',
+	async () =>{
+    await incrementDb.update((data) => {
+      data.i = 0;
+    })
+  },
+	null,
+	true,
+	'Asia/Jakarta'
+);
 
 const port = 18000;
 serve({

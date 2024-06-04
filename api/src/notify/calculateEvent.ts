@@ -46,10 +46,15 @@ export const calculateEvent = async ({
         Math.pow(10, 2);
     }
 
-    const id = incrementDb.data.i
-
     if (medianLastMepasData <= 750) {
       const mepasRsam = Math.round(highMepasRsam);
+
+      if (!imageIsSent) {
+        await incrementDb.update((data) => {
+          data.i = data.i + 1;
+        })
+      }
+      const id = incrementDb.data.i
 
       if (
         (highMepasRsam > 2500 && duration > 10) ||
@@ -87,6 +92,11 @@ export const calculateEvent = async ({
       if (duration > 35 && !imageIsSent) {
         imageIsSent = true;
         try {
+          await incrementDb.update((data) => {
+            data.i = data.i + 1;
+          })
+          const id = incrementDb.data.i
+
           await sendPlot(date, `#${id}`);
           if (ratio <= 2) {
             await sendCctv(`#${id}`);
@@ -98,9 +108,6 @@ export const calculateEvent = async ({
     }
   } else {
     if (medianLastMepasData > 3000) {
-      incrementDb.update((data) => {
-        data.i = data.i + 1;
-      })
       eventInProgress = true;
       highMepasRsam = medianLastMepasData;
       highMelabRsam = medianLastMelabData;

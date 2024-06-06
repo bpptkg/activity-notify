@@ -6,10 +6,12 @@ import FormData from 'form-data';
 import axios from 'axios';
 
 export const sendVideo = async (date: string) => {
+    const path = `/tmp/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
+
     const ffmpegCommand = ffmpeg('rtsp://root:pass@192.168.62.154:554/axis-media/media.amp')
         .inputOptions(['-rtsp_transport', 'tcp', '-loglevel', 'error'])
         .outputOptions(['-c:v', 'libx264'])
-        .output(`/tmp/${date}.mp4`);
+        .output(path);
 
     ffmpegCommand
         .on('start', (cmdline) => {
@@ -24,10 +26,10 @@ export const sendVideo = async (date: string) => {
                 const form = new FormData();
                 form.append("chat_id", "-1002026839953");
                 // form.append("caption", date);
-                form.append('video', createReadStream(`/tmp/${date}.mp4`));
+                form.append('video', createReadStream(path));
 
                 const data = await axios.post(
-                    `https://api.telegram.org/bot7407670437:AAFsJCEv1K4lIifPL0Ou7ALCi3PeH6GvPFU/sendVideo`,
+                    `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
                     form,
                     {
                         headers: form.getHeaders(),

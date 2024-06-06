@@ -126,7 +126,7 @@ def plot_waveforms(eventtime,namafile1):
     # ax2.text(bbox.x1,bbox.y0,"SINOAS Merapi")
     # print(bbox)
     fig.suptitle("SINOAS G. Merapi"+ "\n\n"+ "Event " + UTCDateTime.strftime(tstart+3,format="%Y-%m-%d %H:%M:%S") + " UTC"+ " // " 
-                 + UTCDateTime.strftime(tstart+25203,format="%Y-%m-%d %H:%M:%S") + " WIB"+ "\n" 
+                 + UTCDateTime.strftime(tstart+25200,format="%Y-%m-%d %H:%M:%S") + " WIB"+ "\n" 
                  + " Amax= " + '%.2f' % amp1 + " r_Amax= " + '%.2f' % ramp)
     # fig.tight_layout()
     plt.subplots_adjust(bottom=0.07)

@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv ffmpeg
 
 WORKDIR /app
 

@@ -10,6 +10,8 @@ export const memoryDb = new Low<Data>(new Memory(), {
   alertType: 0,
 });
 
+export const videoDb = new Low<{[key: string]: string}>(new Memory(), {});
+
 export const eventsDb = await JSONFilePreset<any[]>(
   path.resolve(process.cwd(), "./data/events.json"),
   []

@@ -5,13 +5,32 @@ import { createReadStream } from 'fs';
 import FormData from 'form-data';
 import axios from 'axios';
 
+const getPath = (date: string) => `/tmp/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
+
+export const sendVideoStream = async (date: string) => {
+    if (videoDb.data[date] === 'finish') {
+        const form = new FormData();
+        form.append("chat_id", "-1002026839953");
+        // form.append("caption", date);
+        form.append('video', createReadStream(getPath(date)));
+
+        const data = await axios.post(
+            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
+            form,
+            {
+                headers: form.getHeaders(),
+            }
+        );
+    }
+}
+
 export const sendVideo = async (date: string) => {
     const path = `/tmp/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
     const ffmpegCommand = ffmpeg('rtsp://root:pass@192.168.62.154:554/axis-media/media.amp')
         .inputOptions(['-rtsp_transport', 'tcp'])
         .outputOptions(['-c:v', 'libx264'])
-        .output(path);
+        .output(getPath(date));
 
     ffmpegCommand
         .on('start', (cmdline) => {
@@ -22,25 +41,13 @@ export const sendVideo = async (date: string) => {
         })
         .on('end', async () => {
             console.log('FFmpeg process finished');
-            if (videoDb.data[date] === 'finish') {
-                const form = new FormData();
-                form.append("chat_id", "-1002026839953");
-                // form.append("caption", date);
-                form.append('video', createReadStream(path));
-
-                const data = await axios.post(
-                    `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
-                    form,
-                    {
-                        headers: form.getHeaders(),
-                    }
-                );
-            }
+            await sendVideoStream(date)
         })
-        .on('error', (err, stdout, stderr) => {
+        .on('error', async (err, stdout, stderr) => {
             console.error('Error occurred:', err.message);
             console.error('FFmpeg stdout:', stdout);
             console.error('FFmpeg stderr:', stderr);
+            await sendVideoStream(date)
         })
         .run();
 

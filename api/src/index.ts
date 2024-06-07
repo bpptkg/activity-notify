@@ -9,24 +9,11 @@ import path from "path";
 import { logger } from "./logger";
 import { CronJob } from 'cron';
 import { incrementDb, videoDb } from "./db";
-import { sendVideo } from "./notify/sendVideo";
 
 const app = new Hono();
 app.use("*", cors());
 app.route("notify", notifyController);
 app.route("events", eventController);
-
-
-await videoDb.update((x) => {
-  x['2022-11-01'] = 'pending'
-})
-sendVideo('2022-11-01');
-
-setTimeout(async () => {
-  await videoDb.update((x) => {
-    x['2022-11-01'] = 'finish'
-  })
-}, 30000);
 
 
 setInterval(() => {

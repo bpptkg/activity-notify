@@ -4,6 +4,7 @@ import { incrementDb, videoDb } from '../db';
 import { createReadStream } from 'fs';
 import FormData from 'form-data';
 import axios from 'axios';
+import { logger } from '../logger';
 
 const getPath = (date: string) => `/tmp/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
@@ -35,19 +36,19 @@ export const sendVideo = async (date: string) => {
 
     ffmpegCommand
         .on('start', (cmdline) => {
-            console.log('Started FFmpeg with command:', cmdline);
+            logger.info('Started FFmpeg with command:', cmdline);
         })
         .on('progress', (progress) => {
-            console.log(`Processing: ${progress.percent}% done`);
+            logger.info(`Processing: ${progress.percent}% done`);
         })
         .on('end', async () => {
-            console.log('FFmpeg process finished');
+            logger.info('FFmpeg process finished');
             await sendVideoStream(date)
         })
         .on('error', async (err, stdout, stderr) => {
-            console.error('Error occurred:', err.message);
-            console.error('FFmpeg stdout:', stdout);
-            console.error('FFmpeg stderr:', stderr);
+            logger.error('Error occurred:', err.message);
+            logger.error('FFmpeg stdout:', stdout);
+            logger.error('FFmpeg stderr:', stderr);
             await sendVideoStream(date)
         })
         .run();

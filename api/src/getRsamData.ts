@@ -30,7 +30,7 @@ export const getRsamData = async () => {
   mepasJSON.pop()
   melabJSON.pop()
 
-  if (Number.isNaN(mepasJSON[mepasJSON.length - 1][1])) {
+  if (!mepasJSON.length || !melabJSON.length || Number.isNaN(mepasJSON[mepasJSON.length - 1][1])) {
     return;
   }
 

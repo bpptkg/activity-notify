@@ -16,13 +16,20 @@ export const sendVideoStream = async (date: string) => {
         form.append("caption", `#${id}`);
         form.append('video', createReadStream(getPath(date)));
 
-        const data = await axios.post(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
-            form,
-            {
-                headers: form.getHeaders(),
-            }
-        );
+        try {
+            const {data} = await axios.post(
+                `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
+                form,
+                {
+                    headers: form.getHeaders(),
+                }
+            );
+
+            logger.info(data);
+        } catch (error) {
+            logger.error(error)
+        }
+
     }
 }
 
@@ -36,7 +43,7 @@ export const sendVideo = async (date: string) => {
 
     ffmpegCommand
         .on('start', (cmdline) => {
-            logger.info('Started FFmpeg with command:', cmdline);
+            logger.info(`Started FFmpeg with command: ${cmdline}`);
         })
         .on('progress', (progress) => {
             logger.info(`Processing: ${progress.percent}% done`);
@@ -46,9 +53,12 @@ export const sendVideo = async (date: string) => {
             await sendVideoStream(date)
         })
         .on('error', async (err, stdout, stderr) => {
-            logger.error('Error occurred:', err.message);
-            logger.error('FFmpeg stdout:', stdout);
-            logger.error('FFmpeg stderr:', stderr);
+            logger.error('Error occurred:');
+            logger.error(err.message);
+            logger.error('FFmpeg stdout:');
+            logger.error(stdout);
+            logger.error('FFmpeg stderr:');
+            logger.error(stderr);
             await sendVideoStream(date)
         })
         .run();

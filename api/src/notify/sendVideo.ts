@@ -9,7 +9,7 @@ export const sendVideo = async (date: string) => {
     const path = `/tmp/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
     const ffmpegCommand = ffmpeg('rtsp://root:pass@192.168.62.154:554/axis-media/media.amp')
-        .inputOptions(['-rtsp_transport', 'tcp', '-loglevel', 'error'])
+        .inputOptions(['-rtsp_transport', 'tcp'])
         .outputOptions(['-c:v', 'libx264'])
         .output(path);
 

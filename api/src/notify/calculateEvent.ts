@@ -74,10 +74,10 @@ export const calculateEvent = async ({
           if (!imageIsSent) {
             await sendPlot(date, `#${id}`);
             if (ratio <= 2) {
+              await sendCctv(`#${id}`);
               await videoDb.update((data) => {
                 data[date] = 'finish';
               })
-              await sendCctv(`#${id}`);
             } else {
               await videoDb.update((data) => {
                 data[date] = 'drop';
@@ -104,9 +104,6 @@ export const calculateEvent = async ({
       if (duration > 35 && !imageIsSent) {
         imageIsSent = true;
         try {
-          await videoDb.update((data) => {
-            data[date] = 'finish';
-          })
           await incrementDb.update((data) => {
             data.i = data.i + 1;
           })
@@ -116,6 +113,9 @@ export const calculateEvent = async ({
           if (ratio <= 2) {
             await sendCctv(`#${id}`);
           }
+          await videoDb.update((data) => {
+            data[date] = 'finish';
+          })
         } catch (error) {
           imageIsSent = false;
         }

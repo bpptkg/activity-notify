@@ -1,6 +1,6 @@
 
 import ffmpeg from 'fluent-ffmpeg'
-import { videoDb } from '../db';
+import { incrementDb, videoDb } from '../db';
 import { createReadStream } from 'fs';
 import FormData from 'form-data';
 import axios from 'axios';
@@ -9,9 +9,10 @@ const getPath = (date: string) => `/tmp/${date.replaceAll(':', '_').replaceAll('
 
 export const sendVideoStream = async (date: string) => {
     if (videoDb.data[date] === 'finish') {
+        const id = incrementDb.data.i
         const form = new FormData();
         form.append("chat_id", "-1002026839953");
-        // form.append("caption", date);
+        form.append("caption", `#${id}`);
         form.append('video', createReadStream(getPath(date)));
 
         const data = await axios.post(

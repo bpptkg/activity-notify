@@ -6,7 +6,7 @@ import FormData from 'form-data';
 import axios from 'axios';
 import { logger } from '../logger';
 
-const getPath = (date: string) => `/app/videos/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
+const getPath = (date: string) => `/app/data/videos/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
 export const sendVideoStream = async (date: string) => {
     if (videoDb.data[date] === 'finish') {

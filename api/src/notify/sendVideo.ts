@@ -5,6 +5,8 @@ import { createReadStream } from 'fs';
 import FormData from 'form-data';
 import axios from 'axios';
 import { logger } from '../logger';
+import dayjs from 'dayjs';
+import { readdir, unlink } from 'fs/promises';
 
 const getPath = (date: string) => `/app/data/videos/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
@@ -17,7 +19,7 @@ export const sendVideoStream = async (date: string) => {
         form.append('video', createReadStream(getPath(date)));
 
         try {
-            const {data} = await axios.post(
+            const { data } = await axios.post(
                 `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
                 form,
                 {
@@ -33,7 +35,66 @@ export const sendVideoStream = async (date: string) => {
     }
 }
 
-export const sendVideo = async (date: string) => {
+export const sendVideoToTelegram = async () => {
+        const id = incrementDb.data.i
+        const form = new FormData();
+        form.append("chat_id", "-1002026839953");
+        form.append("caption", `#${id}`);
+        form.append('video', createReadStream('/tmp/tmp.mp4'));
+
+        try {
+            const { data } = await axios.post(
+                `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
+                form,
+                {
+                    headers: form.getHeaders(),
+                }
+            );
+
+            logger.info(data);
+        } catch (error:any) {
+            logger.error(error.response ? error.response.data : error)
+        }
+}
+
+export const sendVideoFromGallery = async (date: string, duration: number) => {
+    const path = `${process.cwd()}/videos/${dayjs(date).format('YYYY/MM/DD')}/Jurangjero`
+    const output = `/tmp/tmp.mp4`
+
+    try {
+        await unlink(output)
+    } catch (error) {
+        // 
+    }
+
+    try {
+        const data = (await readdir(path)).reverse()
+        const video = data.find((x) => x < dayjs(date).format('YYYYMMDDHHmmss'))
+
+        if (!video) {
+            logger.info('No video found')
+            return
+        }
+        const diff = dayjs(date).diff(dayjs(video.substring(0, 14)), 's')
+
+        ffmpeg(`${path}/${video}`)
+            .setStartTime(diff < 5 ? 0 : diff - 5)
+            .setDuration(duration)
+            .output(output)
+            .on('end', () => {
+                console.log('Video has been converted successfully.');
+                sendVideoToTelegram()
+            })
+            .on('error', (err) => {
+                console.error('An error occurred: ' + err.message);
+            })
+            .run();
+    } catch (error) {
+        logger.error(error)
+    }
+}
+
+export const sendVideo = async (date: string, duration: number) => {
     logger.info(`Send video called on: ${date}`)
 
     const ffmpegCommand = ffmpeg('rtsp://root:pass@192.168.62.154:554/axis-media/media.amp')

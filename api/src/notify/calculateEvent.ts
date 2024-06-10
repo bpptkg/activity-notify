@@ -5,7 +5,7 @@ import { sendCctv } from "./sendCctv";
 import { sendEvent } from "./sendEvent";
 import { sendPlot } from "./sendPlot";
 import { logger } from "../logger";
-import { sendVideo } from "./sendVideo";
+import { sendVideo, sendVideoFromGallery } from "./sendVideo";
 
 let sendingMessageInProgress = false;
 let imageIsSent = false;
@@ -84,6 +84,10 @@ export const calculateEvent = async ({
               })
             }
           }
+
+          if (ratio <= 2) {
+            await sendVideoFromGallery(date, duration)
+          }
         } catch (error) {
           logger.error(error);
         }
@@ -132,9 +136,9 @@ export const calculateEvent = async ({
         data[date] = 'pending';
       })
 
-      sendVideo(date).catch((error) => {
-        logger.error(error);
-      })
+      // sendVideo(date).catch((error) => {
+      //   logger.error(error);
+      // })
     }
   }
 };

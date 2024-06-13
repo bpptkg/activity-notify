@@ -7,7 +7,7 @@ import { isFileOlderThanSeconds } from "./utils";
 const inputStream = 'rtsp://root:pass@192.168.62.154:554/axis-media/media.amp';
 
 const outputPattern = `${process.cwd()}/data/videos/%Y%m%d%H%M%S.mp4`;
-const segmentTime = '10';
+const segmentTime = '15';
 
 export const recordVideo = async () => {
     logger.info('Recording video...');

@@ -8,7 +8,8 @@ import { deleteOldFiles } from "./utils";
 import path from "path";
 import { logger } from "./logger";
 import { CronJob } from 'cron';
-import { incrementDb, videoDb } from "./db";
+import { incrementDb } from "./db";
+import { deleteOldVideos, recordVideo } from "./recordVideo";
 
 const app = new Hono();
 app.use("*", cors());
@@ -35,6 +36,9 @@ const job = new CronJob(
 	true,
 	'Asia/Jakarta'
 );
+
+recordVideo()
+deleteOldVideos()
 
 const port = 18000;
 serve({

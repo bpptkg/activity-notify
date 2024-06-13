@@ -38,7 +38,7 @@ export const sendVideoStream = async (date: string) => {
 export const sendVideoToTelegram = async () => {
         const id = incrementDb.data.i
         const form = new FormData();
-        form.append("chat_id", "-1002026839953");
+        form.append("chat_id", "-1002211468994");
         form.append("caption", `#${id}`);
         form.append('video', createReadStream('/tmp/tmp.mp4'));
 
@@ -58,7 +58,7 @@ export const sendVideoToTelegram = async () => {
 }
 
 export const sendVideoFromGallery = async (date: string, duration: number) => {
-    const path = `${process.cwd()}/videos/${dayjs(date).format('YYYY/MM/DD')}/Jurangjero`
+    const path = `/app/data/videos`
     const output = `/tmp/tmp.mp4`
 
     try {
@@ -68,27 +68,25 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
     }
 
     try {
-        const data = (await readdir(path)).reverse()
-        const video = data.find((x) => x < dayjs(date).format('YYYYMMDDHHmmss'))
-
-        if (!video) {
-            logger.info('No video found')
-            return
-        }
-        const diff = dayjs(date).diff(dayjs(video.substring(0, 14)), 's')
-
-        ffmpeg(`${path}/${video}`)
-            .setStartTime(diff < 5 ? 0 : diff - 5)
-            .setDuration(duration)
-            .output(output)
-            .on('end', () => {
-                console.log('Video has been converted successfully.');
-                sendVideoToTelegram()
-            })
+        setTimeout(async () => {
+            const videos = (await readdir(path))
+            videos.pop()
+    
+            const ffmpegCommand = ffmpeg();
+            videos.forEach(file => {
+                ffmpegCommand.input(file);
+            });
+    
+            ffmpegCommand
             .on('error', (err) => {
-                console.error('An error occurred: ' + err.message);
+              console.log('Error concatenating videos: ' + err.message);
             })
-            .run();
+            .on('end', () => {
+              console.log('Files have been merged successfully');
+              sendVideoToTelegram()
+            })
+            .mergeToFile(output, '/tmp');
+        }, 10000);
     } catch (error) {
         logger.error(error)
     }

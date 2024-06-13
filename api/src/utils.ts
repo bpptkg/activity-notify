@@ -16,14 +16,21 @@ export const findMedian = (numbers: number[]) => {
   }
 };
 
-// Helper function to check if the file is older than 24 hours
-const isOlderDays = (filePath: string, days = 1) => {
-  const stats = fs.statSync(filePath);
-  const now = Date.now();
-  const modificationTime = new Date(stats.mtime).getTime();
-  const hours24 = days * 24 * 60 * 60 * 1000;
-  return now - modificationTime > hours24;
+export const isFileOlderThanSeconds = (filePath: string, seconds: number) => {
+  try {
+    const stats = fs.statSync(filePath);
+    const currentTime = Date.now();
+    const fileModifiedTime = new Date(stats.mtime).getTime();
+    const differenceInSeconds = (currentTime - fileModifiedTime) / 1000;
+
+    return differenceInSeconds > seconds;
+  } catch (error) {
+    throw error;
+  }
 };
+
+// Helper function to check if the file is older than 24 hours
+const isOlderDays = (filePath: string, days = 1) => isFileOlderThanSeconds(filePath, days * 24 * 60 * 60);
 
 // Function to delete files older than 24 hours
 export const deleteOldFiles = (dirPath: string) => {

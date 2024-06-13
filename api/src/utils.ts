@@ -34,7 +34,7 @@ const isOlderDays = (filePath: string, days = 1) => isFileOlderThanSeconds(fileP
 
 // Function to delete files older than 24 hours
 export const deleteOldFiles = (dirPath: string) => {
-  logger.info(`Deleting files in ${dirPath} older than 24 hours...`);
+  // logger.info(`Deleting files in ${dirPath} older than 24 hours...`);
 
   fs.readdir(dirPath, (err, files) => {
     if (err) {
@@ -45,16 +45,16 @@ export const deleteOldFiles = (dirPath: string) => {
       const filePath = path.join(dirPath, file);
       
       if (file.startsWith("logs") && isOlderDays(filePath)) {
-        logger.info(`Deleting ${file}...`);
+        // logger.info(`Deleting ${file}...`);
         fs.unlink(filePath, (err) => {
           if (err) {
             logger.error(`Error deleting file: ${filePath}`, err);
           } else {
-            logger.info(`Deleted file: ${filePath}`);
+            // logger.info(`Deleted file: ${filePath}`);
           }
         });
       } else if (file.endsWith("mseed") && isOlderDays(filePath, 7)) {
-        logger.info(`Deleting ${file}...`);
+        // logger.info(`Deleting ${file}...`);
         fs.unlink(filePath, (err) => {
           if (err) {
             logger.error(`Error deleting file: ${filePath}`, err);

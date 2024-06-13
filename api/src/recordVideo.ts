@@ -41,7 +41,7 @@ export const deleteOldVideos = async () => {
             await Promise.all(files.map(async (file) => {
                 const filePath = path.join(dirPath, file);
                 if (isFileOlderThanSeconds(filePath, 120)) {
-                    logger.error(`Deleting file: ${filePath}`);
+                    // logger.info(`Deleting file: ${filePath}`);
                     try {
                         await unlink(filePath);
                     } catch (error) {
@@ -50,7 +50,7 @@ export const deleteOldVideos = async () => {
                 }
             }))
         } catch (error) {
-            return logger.info("Unable to delete old videos: " + error);
+            return logger.error("Unable to delete old videos: " + error);
         }
     }, 1000 * 10)
 }

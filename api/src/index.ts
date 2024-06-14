@@ -25,7 +25,7 @@ setInterval(() => {
   deleteOldFiles(path.resolve(process.cwd(), `./data`));
 }, 1000 * 60 * 60);
 
-const job = new CronJob(
+new CronJob(
 	'0 0 * * *',
 	async () =>{
     await incrementDb.update((data) => {
@@ -36,9 +36,6 @@ const job = new CronJob(
 	true,
 	'Asia/Jakarta'
 );
-
-recordVideo()
-deleteOldVideos()
 
 const port = 18000;
 serve({

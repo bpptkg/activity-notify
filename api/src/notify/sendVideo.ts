@@ -7,6 +7,7 @@ import axios from 'axios';
 import { logger } from '../logger';
 import dayjs from 'dayjs';
 import { readdir, unlink } from 'fs/promises';
+import { isValidVideo } from '../utils';
 
 const getPath = (date: string) => `/app/data/videos/${date.replaceAll(':', '_').replaceAll(' ', '-')}.mp4`
 
@@ -70,10 +71,24 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
     try {
         setTimeout(async () => {
             const videos = (await readdir(path))
-            videos.pop()
+
+            const validVideos = [];
+            for (const file of videos) {
+                const isValid = await isValidVideo(file);
+                if (isValid) {
+                    validVideos.push(file);
+                } else {
+                    console.log(`Invalid or broken video file skipped: ${file}`);
+                }
+            }
+
+            if (validVideos.length === 0) {
+                console.log('No valid files to merge.');
+                return;
+            }
     
             const ffmpegCommand = ffmpeg();
-            videos.forEach(file => {
+            validVideos.forEach(file => {
                 ffmpegCommand.input(file);
             });
     

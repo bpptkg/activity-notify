@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { logger } from "./logger";
+import ffmpeg from 'fluent-ffmpeg'
 
 export const findMedian = (numbers: number[]) => {
   if (numbers.length === 0) throw new Error("No numbers provided");
@@ -66,3 +67,23 @@ export const deleteOldFiles = (dirPath: string) => {
     });
   });
 };
+
+
+export const  isValidVideo = async (filePath: string) => {
+  return new Promise((resolve) => {
+      ffmpeg(filePath)
+          .on('error', () => {
+              resolve(false);
+          })
+          .on('end', () => {
+              resolve(true);
+          })
+          .ffprobe((err) => {
+              if (err) {
+                  resolve(false);
+              } else {
+                  resolve(true);
+              }
+          });
+  });
+}

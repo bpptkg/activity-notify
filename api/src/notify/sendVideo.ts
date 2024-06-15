@@ -1,6 +1,6 @@
 
 import ffmpeg from 'fluent-ffmpeg'
-import { incrementDb, videoDb } from '../db';
+import { globalDb, incrementDb, videoDb } from '../db';
 import { createReadStream } from 'fs';
 import FormData from 'form-data';
 import axios from 'axios';
@@ -37,25 +37,25 @@ export const sendVideoStream = async (date: string) => {
 }
 
 export const sendVideoToTelegram = async () => {
-        const id = incrementDb.data.i
-        const form = new FormData();
-        form.append("chat_id", "-1002211468994");
-        form.append("caption", `#${id}`);
-        form.append('video', createReadStream('/tmp/tmp.mp4'));
+    const id = incrementDb.data.i
+    const form = new FormData();
+    form.append("chat_id", "-1002211468994");
+    form.append("caption", `#${id}`);
+    form.append('video', createReadStream('/tmp/tmp.mp4'));
 
-        try {
-            const { data } = await axios.post(
-                `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
-                form,
-                {
-                    headers: form.getHeaders(),
-                }
-            );
+    try {
+        const { data } = await axios.post(
+            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
+            form,
+            {
+                headers: form.getHeaders(),
+            }
+        );
 
-            logger.info(data);
-        } catch (error:any) {
-            logger.error(error.response ? error.response.data : error)
-        }
+        logger.info(data);
+    } catch (error: any) {
+        logger.error(error.response ? error.response.data : error)
+    }
 }
 
 export const sendVideoFromGallery = async (date: string, duration: number) => {
@@ -86,21 +86,27 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
                 console.log('No valid files to merge.');
                 return;
             }
-    
+
             const ffmpegCommand = ffmpeg();
             validVideos.forEach(file => {
                 ffmpegCommand.input(file);
             });
-    
+
             ffmpegCommand
-            .on('error', (err) => {
-              console.log('Error concatenating videos: ' + err.message);
-            })
-            .on('end', () => {
-              console.log('Files have been merged successfully');
-              sendVideoToTelegram()
-            })
-            .mergeToFile(output, '/tmp');
+                .on('error', async (err) => {
+                    console.log('Error concatenating videos: ' + err.message);
+                    await globalDb.update((data) => {
+                        data.isProcessingVideo = false
+                    })
+                })
+                .on('end', async () => {
+                    console.log('Files have been merged successfully');
+                    await globalDb.update((data) => {
+                        data.isProcessingVideo = false
+                    })
+                    sendVideoToTelegram()
+                })
+                .mergeToFile(output, '/tmp');
         }, 10000);
     } catch (error) {
         logger.error(error)

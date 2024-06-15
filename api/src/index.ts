@@ -9,7 +9,7 @@ import path from "path";
 import { logger } from "./logger";
 import { CronJob } from 'cron';
 import { incrementDb } from "./db";
-import { deleteOldVideos, recordVideo } from "./recordVideo";
+import { deleteOldVideos } from "./deleteOldVideos";
 
 const app = new Hono();
 app.use("*", cors());
@@ -36,6 +36,8 @@ new CronJob(
 	true,
 	'Asia/Jakarta'
 );
+
+deleteOldVideos();
 
 const port = 18000;
 serve({

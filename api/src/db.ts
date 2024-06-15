@@ -20,3 +20,7 @@ export const incrementDb = await JSONFilePreset<{i: number}>(
   path.resolve(process.cwd(), "./data/increment.json"),
   { i: 1 }
 );
+
+export const globalDb = new Low<{isProcessingVideo: boolean}>(new Memory(), {
+  isProcessingVideo: false
+});

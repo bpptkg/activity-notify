@@ -71,6 +71,7 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
     try {
         setTimeout(async () => {
             const videos = (await readdir(path))
+            videos.pop()
 
             const validVideos = [];
             for (const file of videos) {

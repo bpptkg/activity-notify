@@ -1,4 +1,5 @@
 import fs from "fs";
+import { stat } from "fs/promises";
 import path from "path";
 import { logger } from "./logger";
 import ffmpeg from 'fluent-ffmpeg'
@@ -44,7 +45,7 @@ export const deleteOldFiles = (dirPath: string) => {
 
     files.forEach((file) => {
       const filePath = path.join(dirPath, file);
-      
+
       if (file.startsWith("logs") && isOlderDays(filePath)) {
         // logger.info(`Deleting ${file}...`);
         fs.unlink(filePath, (err) => {
@@ -69,21 +70,12 @@ export const deleteOldFiles = (dirPath: string) => {
 };
 
 
-export const  isValidVideo = async (filePath: string) => {
-  return new Promise((resolve) => {
-      ffmpeg(filePath)
-          .on('error', () => {
-              resolve(false);
-          })
-          .on('end', () => {
-              resolve(true);
-          })
-          .ffprobe((err) => {
-              if (err) {
-                  resolve(false);
-              } else {
-                  resolve(true);
-              }
-          });
-  });
+export const isValidVideo = async (filePath: string) => {
+  try {
+    const stats = await stat(filePath);
+    return stats.size > 10240;
+  } catch (error) {
+    console.error(`Error checking file size: ${error}`);
+    return false;
+  }
 }

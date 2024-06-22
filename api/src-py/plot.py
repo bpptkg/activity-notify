@@ -98,9 +98,9 @@ def plot_waveforms(eventtime,namafile1):
         else:
             print("empty trace for %s" %(sta[i]))
             if sta[i]=="MEPAS":
-                amp1 = np.NaN
+                amp1 = np.nan
             elif sta[i]=="MELAB":
-                amp2 = np.NaN
+                amp2 = np.nan
             ax1.set_xticklabels([])
             if i==3:
                 t= np.arange(3500)

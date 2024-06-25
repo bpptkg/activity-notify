@@ -1,28 +1,42 @@
 import axios from "axios";
 import { logger } from "../logger";
+import ffmpeg from 'fluent-ffmpeg';
+import fs from 'fs';
+import FromData from 'form-data'
 
 export const sendCctv = async (id: string) => {
-  try {
-    const formPhoto = new FormData();
-    formPhoto.append("chat_id", "-1002026839953");
-    formPhoto.append("caption", id);
+  const formPhoto = new FromData();
+  formPhoto.append("chat_id", "-1002026839953");
+  formPhoto.append("caption", id);
 
-    const { data: photo } = await axios.get(`http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`, { responseType: 'blob' })
+  const output = `/tmp/${Date.now()}.jpg`
+  const streamUrl = 'http://root:pass@192.168.62.154/mjpg/video.mjpg?fps=1&overlays=all&videocodec=jpeg';
 
-    // const photoResponse = await fetch(
-    //   `http://192.168.0.74:1984/api/frame.jpeg?src=main_JUR`
-    // );
-    // const photo = await photoResponse.blob();
-    formPhoto.append("photo", photo);
-    const data = await fetch(
-      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
-      {
-        method: "POST",
-        body: formPhoto,
+  ffmpeg(streamUrl)
+    .frames(1)
+    .on('end', async () => {
+      console.log('CCTV taken successfully');
+      try {
+        const photo = fs.createReadStream(output);
+        formPhoto.append('photo', photo);
+        const { data } = await axios.post(
+          `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
+          formPhoto,
+          {
+            headers: {
+              ...formPhoto.getHeaders(), 
+            }
+          }
+        );
+        logger.info("sent cctv to telegram: ", data.code);
+      } catch (error: any) {
+        logger.error('failed send cctv to telegram: ', error?.response?.data);
       }
-    );
-    logger.info("sent cctv to telegram: ", data.json());
-  } catch (error) {
-    logger.error('failed send cctv to telegram: ', error);
-  }
+    })
+    .on('error', (err: any) => {
+      console.error('Error capturing CCTV:', err);
+    })
+    .save(output);
 };
+
+sendCctv('test')

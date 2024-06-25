@@ -49,7 +49,7 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
 
             const videos = (await readdir(path))
             videos.pop()
-            const last5Videos = videos.slice(-3) 
+            const last5Videos = videos.slice(-2) 
 
             const validVideos = [];
             for (const file of last5Videos) {

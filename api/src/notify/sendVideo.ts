@@ -100,6 +100,6 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
         } catch (error) {
             logger.error("ERROR SENDING VIDEO FERROM GALLERY: " + error)
         }
-    }, 10000);
+    }, 12000);
 }
 

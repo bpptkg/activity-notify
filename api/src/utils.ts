@@ -1,5 +1,4 @@
 import fs from "fs";
-import { stat } from "fs/promises";
 import path from "path";
 import { logger } from "./logger";
 import ffmpeg from 'fluent-ffmpeg'
@@ -71,11 +70,26 @@ export const deleteOldFiles = (dirPath: string) => {
 
 
 export const isValidVideo = async (filePath: string) => {
-  try {
-    const stats = await stat(filePath);
-    return stats.size > 10240;
-  } catch (error) {
-    console.error(`Error checking file size: ${error}`);
-    return false;
-  }
+  return new Promise((resolve) => {
+    ffmpeg(filePath)
+      .on('error', (err) => {
+        logger.error('ffprobe error: ' + err);
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      })
+      .on('end', () => {
+        resolve(true);
+      })
+      .ffprobe((err) => {
+        logger.error('ffprobe error: ' + err);
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+  });
 }

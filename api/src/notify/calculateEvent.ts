@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
-import { eventsDb, incrementDb, videoDb } from "../db";
+import { eventsDb, incrementDb } from "../db";
 import { findMedian } from "../utils";
 import { sendCctv } from "./sendCctv";
 import { sendEvent } from "./sendEvent";
 import { sendPlot } from "./sendPlot";
 import { logger } from "../logger";
-import { sendVideo, sendVideoFromGallery } from "./sendVideo";
+import { sendVideoFromGallery } from "./sendVideo";
 
 let sendingMessageInProgress = false;
 let imageIsSent = false;
@@ -75,13 +75,6 @@ export const calculateEvent = async ({
             await sendPlot(date, `#${id}`);
             if (ratio <= 2) {
               await sendCctv(`#${id}`);
-              await videoDb.update((data) => {
-                data[date] = 'finish';
-              })
-            } else {
-              await videoDb.update((data) => {
-                data[date] = 'drop';
-              })
             }
           }
 
@@ -91,10 +84,6 @@ export const calculateEvent = async ({
         } catch (error) {
           logger.error(error);
         }
-      } else {
-        await videoDb.update((data) => {
-          data[date] = 'drop';
-        })
       }
 
       sendingMessageInProgress = false;
@@ -117,9 +106,6 @@ export const calculateEvent = async ({
           if (ratio <= 2) {
             await sendCctv(`#${id}`);
           }
-          await videoDb.update((data) => {
-            data[date] = 'finish';
-          })
         } catch (error) {
           imageIsSent = false;
         }
@@ -131,14 +117,6 @@ export const calculateEvent = async ({
       highMepasRsam = medianLastMepasData;
       highMelabRsam = medianLastMelabData;
       date = mepasJSON[mepasJSON.length - 1][0];
-
-      await videoDb.update((data) => {
-        data[date] = 'pending';
-      })
-
-      // sendVideo(date).catch((error) => {
-      //   logger.error(error);
-      // })
     }
   }
 };

@@ -38,5 +38,3 @@ export const sendCctv = async (id: string) => {
     })
     .save(output);
 };
-
-sendCctv('test')

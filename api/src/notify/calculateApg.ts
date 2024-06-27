@@ -2,6 +2,7 @@ import { memoryDb } from "../db";
 import { logger } from "../logger";
 
 let eventInProgress = false
+let calculateApgInProgress = false
 export const calculateApg = async ({
   mepasJSON,
   melabJSON,
@@ -9,6 +10,11 @@ export const calculateApg = async ({
   mepasJSON: [string, number][];
   melabJSON: [string, number][];
 }) => {
+  if (calculateApgInProgress) {
+    return
+  }
+
+  calculateApgInProgress = true
   const date = mepasJSON[mepasJSON.length - 1][0];
   const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
@@ -59,4 +65,6 @@ export const calculateApg = async ({
   if (mepas <= 40000) {
     eventInProgress = false;
   }
+
+  calculateApgInProgress = false
 };

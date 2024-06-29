@@ -10,6 +10,7 @@ import { logger } from "./logger";
 import { CronJob } from 'cron';
 import { incrementDb } from "./db";
 import { deleteOldVideos } from "./deleteOldVideos";
+import { getThermalData } from "./event/getThermalData";
 
 const app = new Hono();
 app.use("*", cors());
@@ -19,6 +20,7 @@ app.route("events", eventController);
 
 setInterval(() => {
   getRsamData();
+  getThermalData();
 }, 1000);
 
 setInterval(() => {

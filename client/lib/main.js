@@ -1,6 +1,7 @@
 import injectStyle from './inject-style.js';
 import openPopup from './open-popup.js';
 import openPulse from './open-pulse.js';
+import processThermal from './process-thermal.js';
 
 injectStyle()
 openPopup()
@@ -12,7 +13,7 @@ let firstEventDate = ''
 const url = new URL(import.meta.url).searchParams.get("url");
 const source = new EventSource(`${atob(url)}/notify`);
 source.onmessage = function (event) {
-    const { mepas, date, alertType } = JSON.parse(event.data);
+    const { mepas, date, alertType, kubahBd, kubahBdMax, bebeng, boyong, krasak } = JSON.parse(event.data);
     const popup = document.getElementById('rsam-popup')
     const pulse = document.getElementById('rsam-pulse')
     const messageEl = document.getElementById('rsam-popup-message')
@@ -21,6 +22,7 @@ source.onmessage = function (event) {
         return
     }
 
+    processThermal({kubahBd, kubahBdMax, bebeng, boyong, krasak})
 
     if (alertType) {
         if (!firstEventDate) {

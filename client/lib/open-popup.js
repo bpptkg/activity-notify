@@ -1,7 +1,7 @@
 export default function openPopup() {
     // Create the popup container
     const popupContainer = document.createElement('div');
-    popupContainer.style.display = 'none';
+    popupContainer.style.display = 'flex';
     popupContainer.id = 'rsam-popup';
     document.body.appendChild(popupContainer);
 
@@ -24,7 +24,13 @@ export default function openPopup() {
 
     // Add additional content to the popup here if necessary
     const messageContainer = document.createElement('div');
-    messageContainer.innerHTML = `PERINGATAN!!! <br> <div id="rsam-popup-message"></div> <br>`;
+    messageContainer.innerHTML = `<div style="margin-bottom:8px">PERINGATAN!!!</div> 
+        <div style="margin-bottom:12px;font-size:15px" id="rsam-popup-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="kubah-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="bebeng-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="boyong-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="krasak-message"></div> 
+    <br>`;
     popupContent.appendChild(messageContainer);
 
     // Append the popup content box to the popup container

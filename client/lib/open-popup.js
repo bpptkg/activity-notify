@@ -1,7 +1,7 @@
 export default function openPopup() {
     // Create the popup container
     const popupContainer = document.createElement('div');
-    popupContainer.style.display = 'flex';
+    popupContainer.style.display = 'none';
     popupContainer.id = 'rsam-popup';
     document.body.appendChild(popupContainer);
 

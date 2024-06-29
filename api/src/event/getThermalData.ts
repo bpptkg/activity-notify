@@ -27,11 +27,11 @@ export const getThermalData = async () => {
     const kubahBdMax = kubahBdMaxs.pop()
 
     thermalDb.update(async (data) => {
-      data.krasak = krasak ? [dayjs(krasak.timestamp).format('YYYY-MM-DD HH:mm:ss'), krasak.temp] : ['', 0]
-      data.bebeng = bebeng ? [dayjs(bebeng.timestamp).format('YYYY-MM-DD HH:mm:ss'), bebeng.temp] : ['', 0]
-      data.boyong = boyong ? [dayjs(boyong.timestamp).format('YYYY-MM-DD HH:mm:ss'), boyong.temp] : ['', 0]
-      data.kubahBd = kubahBd ? [dayjs(kubahBd.timestamp).format('YYYY-MM-DD HH:mm:ss'), kubahBd.temp] : ['', 0]
-      data.kubahBdMax = kubahBdMax ? [dayjs(kubahBdMax.timestamp).format('YYYY-MM-DD HH:mm:ss'), kubahBdMax.temp] : ['', 0]
+      data.krasak = krasak ? [dayjs(krasak.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), krasak.temp] : ['', 0]
+      data.bebeng = bebeng ? [dayjs(bebeng.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), bebeng.temp] : ['', 0]
+      data.boyong = boyong ? [dayjs(boyong.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), boyong.temp] : ['', 0]
+      data.kubahBd = kubahBd ? [dayjs(kubahBd.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), kubahBd.temp] : ['', 0]
+      data.kubahBdMax = kubahBdMax ? [dayjs(kubahBdMax.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), kubahBdMax.temp] : ['', 0]
     })
     
   } catch (error: any) {

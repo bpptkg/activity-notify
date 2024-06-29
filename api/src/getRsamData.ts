@@ -60,7 +60,7 @@ export const getRsamData = async () => {
         melabJSON
       });
     });
-  } catch (error) {
-    logger.error(error);
+  } catch (error: any) {
+    logger.error(error.toString());
   }
 };

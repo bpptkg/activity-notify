@@ -2,6 +2,7 @@ import axios from "axios";
 import { logger } from "../logger";
 import dayjs from "dayjs";
 import { thermalDb } from "../db";
+import { notifyThermalData } from "./notifyThermalData";
 
 let queryData = false
 export const getThermalData = async () => {
@@ -33,6 +34,8 @@ export const getThermalData = async () => {
       data.kubahBd = kubahBd ? [dayjs(kubahBd.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), kubahBd.temp] : ['', 0]
       data.kubahBdMax = kubahBdMax ? [dayjs(kubahBdMax.timestamp).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'), kubahBdMax.temp] : ['', 0]
     })
+
+    notifyThermalData(thermalDb.data)
     
   } catch (error: any) {
     logger.error(error.toString())

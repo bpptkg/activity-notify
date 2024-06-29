@@ -10,7 +10,7 @@ export const memoryDb = new Low<Data>(new Memory(), {
   alertType: 0,
 });
 
-type ThermalData = {
+export type ThermalData = {
   'krasak': [string, number];
   'bebeng': [string, number];
   'boyong': [string, number];

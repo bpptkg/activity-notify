@@ -22,7 +22,7 @@ export const calculateApg = async ({
   const alertType =
     mepas > 35000 && mepas / melab < 2
       ? 1
-      : mepas > 35000 && mepas / melab > 2
+      : mepas > 100000 && mepas / melab > 2
       ? 2
       : 0;
 

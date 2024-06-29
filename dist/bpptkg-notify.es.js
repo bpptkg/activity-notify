@@ -1,4 +1,4 @@
-function u() {
+function v() {
   const e = document.createElement("style");
   document.head.appendChild(e), e.innerHTML = `
       #rsam-popup {
@@ -67,58 +67,92 @@ function u() {
       }
     `;
 }
-function m() {
+function b() {
   const e = document.createElement("div");
   e.style.display = "none", e.id = "rsam-popup", document.body.appendChild(e);
   const t = document.createElement("div");
   t.classList.add("popup-content");
-  const o = document.createElement("span");
-  o.textContent = "×", o.classList.add("close-btn"), t.appendChild(o);
-  const i = document.createElement("div");
-  i.innerHTML = `<svg style="width:50%;height:auto;color: red" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  const n = document.createElement("span");
+  n.textContent = "×", n.classList.add("close-btn"), t.appendChild(n);
+  const s = document.createElement("div");
+  s.innerHTML = `<svg style="width:50%;height:auto;color: red" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
-    </svg>`, t.appendChild(i);
-  const n = document.createElement("div");
-  n.innerHTML = 'PERINGATAN!!! <br> <div id="rsam-popup-message"></div> <br>', t.appendChild(n), e.appendChild(t), o.addEventListener("click", () => {
+    </svg>`, t.appendChild(s);
+  const o = document.createElement("div");
+  o.innerHTML = `<div style="margin-bottom:8px">PERINGATAN!!!</div> 
+        <div style="margin-bottom:12px;font-size:15px" id="rsam-popup-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="kubah-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="bebeng-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="boyong-message"></div> 
+        <div style="margin-bottom:5px;font-size:14px" id="krasak-message"></div> 
+    <br>`, t.appendChild(o), e.appendChild(t), n.addEventListener("click", () => {
     localStorage.setItem("popup", "off"), e.style.display = "none";
   });
 }
-function f() {
+function w() {
   const e = document.createElement("div");
   e.id = "rsam-pulse", e.style.display = "none", e.innerHTML = '<div class="ringring"></div><div class="circle"></div>', document.body.appendChild(e);
   let t = !1;
-  e.addEventListener("mousedown", function(n) {
-    var a = n.clientX - parseInt(window.getComputedStyle(this).left), l = n.clientY - parseInt(window.getComputedStyle(this).top);
-    function r(c) {
-      t = !0, e.style.left = c.clientX - a + "px", e.style.top = c.clientY - l + "px";
+  e.addEventListener("mousedown", function(o) {
+    var a = o.clientX - parseInt(window.getComputedStyle(this).left), i = o.clientY - parseInt(window.getComputedStyle(this).top);
+    function p(l) {
+      t = !0, e.style.left = l.clientX - a + "px", e.style.top = l.clientY - i + "px";
     }
-    function d() {
+    function u() {
       setTimeout(() => {
         t = !1;
-      }, 2e3), window.removeEventListener("mousemove", r), window.removeEventListener("mouseup", d);
+      }, 2e3), window.removeEventListener("mousemove", p), window.removeEventListener("mouseup", u);
     }
-    window.addEventListener("mousemove", r), window.addEventListener("mouseup", d);
+    window.addEventListener("mousemove", p), window.addEventListener("mouseup", u);
   });
-  let o = 0, i = null;
+  let n = 0, s = null;
   e.addEventListener("click", function() {
-    o++, !i && (i = setTimeout(() => {
-      if (o === 1) {
+    n++, !s && (s = setTimeout(() => {
+      if (n === 1) {
         if (!t) {
-          const n = document.getElementById("rsam-popup");
-          n && (n.style.display = "flex", localStorage.setItem("popup", "on"));
+          const o = document.getElementById("rsam-popup");
+          o && (o.style.display = "flex", localStorage.setItem("popup", "on"));
         }
       } else
         e.style.left = `${window.innerWidth - 70}px`, e.style.top = "0px";
-      o = 0, i = null;
+      n = 0, s = null;
     }, 200));
   });
 }
-u();
-m();
-f();
-let s = 0, p = "";
-const g = new URL(import.meta.url).searchParams.get("url"), h = new EventSource(`${atob(g)}/notify`);
-h.onmessage = function(e) {
-  const { mepas: t, date: o, alertType: i } = JSON.parse(e.data), n = document.getElementById("rsam-popup"), a = document.getElementById("rsam-pulse"), l = document.getElementById("rsam-popup-message");
-  n && a && (i ? (p || (p = o), t > s && (s = t), a.style.display = "block", localStorage.getItem("popup") !== "off" && (n.style.display = "flex"), l.innerHTML = i === 1 ? `Nilai RSAM ${s} <br> Waspadai APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${p}</span>` : `Nilai RSAM ${s} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${p}</span>`) : (s = 0, p = "", localStorage.setItem("popup", "on")));
+let c = 0, g = 0, f = 0, y = 0, x = 0;
+function E({ kubahBd: e, kubahBdMax: t, bebeng: n, boyong: s, krasak: o }) {
+  let a = !1;
+  if (n[1] > 20 && n[1] > c) {
+    a = !0, c = n[1];
+    const i = document.getElementById("bebeng-message");
+    i.innerHTML = `Terjadi RF/AP di Sungai Bebeng (Suhu ${n[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${n[0]}</span>`;
+  }
+  if (s[1] > 20 && s[1] > g) {
+    a = !0, g = s[1];
+    const i = document.getElementById("boyong-message");
+    i.innerHTML = `Terjadi RF/AP di Sungai Boyong (Suhu ${s[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${s[0]}</span>`;
+  }
+  if (o[1] > 20 && o[1] > f) {
+    a = !0, f = o[1];
+    const i = document.getElementById("krasak-message");
+    i.innerHTML = `Terjadi RF/AP di Sungai Krasak (Suhu ${o[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${o[0]}</span>`;
+  }
+  if (e[1] > 20 && e[1] > y || t[1] > 100 && t[1] > x) {
+    a = !0, y = e[1], x = t[1];
+    const i = document.getElementById("kubah-message");
+    i.innerHTML = `Peningkatan suhu kubah BD <br> (Suhu Avg ${e[1]}&deg;, Suhu Max ${t[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${t[0]}</span>`;
+  }
+  if (a) {
+    const i = document.getElementById("rsam-popup"), p = document.getElementById("rsam-pulse");
+    p.style.display = "block", localStorage.getItem("popup") !== "off" && (i.style.display = "flex");
+  }
+}
+v();
+b();
+w();
+let r = 0, d = "";
+const L = new URL(import.meta.url).searchParams.get("url"), k = new EventSource(`${atob(L)}/notify`);
+k.onmessage = function(e) {
+  const { mepas: t, date: n, alertType: s, kubahBd: o, kubahBdMax: a, bebeng: i, boyong: p, krasak: u } = JSON.parse(e.data), l = document.getElementById("rsam-popup"), m = document.getElementById("rsam-pulse"), h = document.getElementById("rsam-popup-message");
+  l && m && (E({ kubahBd: o, kubahBdMax: a, bebeng: i, boyong: p, krasak: u }), s ? (d || (d = n), t > r && (r = t), m.style.display = "block", localStorage.getItem("popup") !== "off" && (l.style.display = "flex"), h.innerHTML = s === 1 ? `Nilai RSAM ${r} <br> Waspadai APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${d}</span>` : `Nilai RSAM ${r} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${d}</span>`) : (r = 0, d = "", localStorage.setItem("popup", "on")));
 };

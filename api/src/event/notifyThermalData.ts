@@ -18,12 +18,11 @@ export const notifyThermalData = async (data: ThermalData) => {
   const rivers: ('krasak' | 'bebeng' | 'boyong' | 'kubahBd')[] = ['krasak', 'bebeng', 'boyong', 'kubahBd']
 
   await Promise.all(rivers.map(async (river): Promise<void> => {
-    console.log(river);
-    
     if (river === 'kubahBd') {
       if (!eventInProgres.kubahBd && (data.kubahBd[1] > 20 || data.kubahBdMax[1] > 100)) {
+        eventInProgres.kubahBd = true
         const form = new FormData();
-        const text = `Peringatan! Terjadi RF/AP di kubah BD. Suhu di kubah BD ${data[river][1]} derajat.\n${data[river][0]}`;
+        const text = `Peringatan! Terjadi RF/AP di kubah BD. Suhu di kubah BD AVG: ${data.kubahBd[1]} derajat MAX: ${data.kubahBdMax[1]} derajat.\n${data.kubahBd[0]}`;
         form.append("chat_id", "-1002026839953");
         form.append("text", text);
         form.append("parse_mode", "Markdown");
@@ -42,6 +41,7 @@ export const notifyThermalData = async (data: ThermalData) => {
       }
     } else {
       if (data[river][1] > 20 && !eventInProgres[river]) {
+        eventInProgres[river] = true
         const form = new FormData();
         const text = `Peringatan! Terjadi RF/AP di sungai ${ucFirst(river)}. Suhu di sungai ${ucFirst(river)} ${data[river][1]} derajat.\n${data[river][0]}`;
         form.append("chat_id", "-1002026839953");

@@ -1,4 +1,4 @@
-function v() {
+function b() {
   const e = document.createElement("style");
   document.head.appendChild(e), e.innerHTML = `
       #rsam-popup {
@@ -67,7 +67,7 @@ function v() {
       }
     `;
 }
-function b() {
+function v() {
   const e = document.createElement("div");
   e.style.display = "none", e.id = "rsam-popup", document.body.appendChild(e);
   const t = document.createElement("div");
@@ -119,40 +119,40 @@ function w() {
     }, 200));
   });
 }
-let c = 0, g = 0, f = 0, y = 0, x = 0;
-function E({ kubahBd: e, kubahBdMax: t, bebeng: n, boyong: s, krasak: o }) {
+let c = 0, f = 0, g = 0, y = 0, x = 0;
+function E({ kubahBd: e, kubahBdAvg: t, bebeng: n, boyong: s, krasak: o }) {
   let a = !1;
   if (n[1] > 20 && n[1] > c) {
     a = !0, c = n[1];
     const i = document.getElementById("bebeng-message");
     i.innerHTML = `Terjadi RF/AP di Sungai Bebeng (Suhu ${n[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${n[0]}</span>`;
   }
-  if (s[1] > 20 && s[1] > g) {
-    a = !0, g = s[1];
+  if (s[1] > 20 && s[1] > f) {
+    a = !0, f = s[1];
     const i = document.getElementById("boyong-message");
     i.innerHTML = `Terjadi RF/AP di Sungai Boyong (Suhu ${s[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${s[0]}</span>`;
   }
-  if (o[1] > 20 && o[1] > f) {
-    a = !0, f = o[1];
+  if (o[1] > 20 && o[1] > g) {
+    a = !0, g = o[1];
     const i = document.getElementById("krasak-message");
     i.innerHTML = `Terjadi RF/AP di Sungai Krasak (Suhu ${o[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${o[0]}</span>`;
   }
-  if (e[1] > 20 && e[1] > y || t[1] > 100 && t[1] > x) {
+  if (e[1] > 100 && e[1] > y || t[1] > 20 && t[1] > x) {
     a = !0, y = e[1], x = t[1];
     const i = document.getElementById("kubah-message");
-    i.innerHTML = `Peningkatan suhu kubah BD <br> (Suhu Avg ${e[1]}&deg;, Suhu Max ${t[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${t[0]}</span>`;
+    i.innerHTML = `Terjadi peningkatan suhu di kubah BD <br> (Suhu Avg ${t[1]}&deg;, Suhu Max ${e[1]}&deg;) <br> <span style="font-size:12px;font-weight:normal">${e[0]}</span>`;
   }
   if (a) {
     const i = document.getElementById("rsam-popup"), p = document.getElementById("rsam-pulse");
     p.style.display = "block", localStorage.getItem("popup") !== "off" && (i.style.display = "flex");
   }
 }
-v();
 b();
+v();
 w();
 let r = 0, d = "";
-const L = new URL(import.meta.url).searchParams.get("url"), k = new EventSource(`${atob(L)}/notify`);
-k.onmessage = function(e) {
+const L = new URL(import.meta.url).searchParams.get("url"), M = new EventSource(`${atob(L)}/notify`);
+M.onmessage = function(e) {
   const { mepas: t, date: n, alertType: s, kubahBd: o, kubahBdMax: a, bebeng: i, boyong: p, krasak: u } = JSON.parse(e.data), l = document.getElementById("rsam-popup"), m = document.getElementById("rsam-pulse"), h = document.getElementById("rsam-popup-message");
   l && m && (E({ kubahBd: o, kubahBdMax: a, bebeng: i, boyong: p, krasak: u }), s ? (d || (d = n), t > r && (r = t), m.style.display = "block", localStorage.getItem("popup") !== "off" && (l.style.display = "flex"), h.innerHTML = s === 1 ? `Nilai RSAM ${r} <br> Waspadai APG > 1KM <br> <span style="font-size:12px;font-weight:normal">${d}</span>` : `Nilai RSAM ${r} <br>Terjadi Gempa VT Kuat <br> <span style="font-size:12px;font-weight:normal">${d}</span>`) : (r = 0, d = "", localStorage.setItem("popup", "on")));
 };

@@ -23,12 +23,12 @@ export const notifyThermalData = async (data: ThermalData) => {
   await Promise.all(rivers.map(async (river): Promise<void> => {
     if (river === 'kubahBd') {
 
-      if (!avgTrigger && !maxTrigger && (data.kubahBd[1] > 20 || data.kubahBdMax[1] > 100)) {
-        avgTrigger = data.kubahBd[1] > 20
-        maxTrigger = data.kubahBdMax[1] > 100
+      if (!avgTrigger && !maxTrigger && (data.kubahBdAvg[1] > 20 || data.kubahBd[1] > 100)) {
+        avgTrigger = data.kubahBdAvg[1] > 20
+        maxTrigger = data.kubahBd[1] > 100
 
         const form = new FormData();
-        const text = `Peringatan! Terjadi RF/AP di kubah BD. Suhu di kubah BD AVG: ${data.kubahBd[1]} derajat MAX: ${data.kubahBdMax[1]} derajat.\n${data.kubahBd[0]}`;
+        const text = `Peringatan!\nTerjadi peningkatan suhu di Kubah BD. Suhu di kubah BD AVG: ${data.kubahBdAvg[1]} derajat MAX: ${data.kubahBd[1]} derajat.\n${data.kubahBd[0]}`;
         form.append("chat_id", "-1002026839953");
         form.append("text", text);
         form.append("parse_mode", "Markdown");
@@ -42,9 +42,9 @@ export const notifyThermalData = async (data: ThermalData) => {
         } catch (error) {
           logger.info("failed to send river event to telegram: ", error?.toString());
         }
-      } else if (avgTrigger && data.kubahBd[1] < 15) {
+      } else if (avgTrigger && data.kubahBdAvg[1] < 15) {
         avgTrigger = false
-      } else if (maxTrigger && data.kubahBdMax[1] < 50) {
+      } else if (maxTrigger && data.kubahBd[1] < 50) {
         avgTrigger = false
       }
     } else {

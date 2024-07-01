@@ -15,14 +15,14 @@ export type ThermalData = {
   'bebeng': [string, number];
   'boyong': [string, number];
   'kubahBd': [string, number];
-  'kubahBdMax': [string, number];
+  'kubahBdAvg': [string, number];
 };
 export const thermalDb = new Low<ThermalData>(new Memory(), {
   krasak: ['', 0],
   bebeng: ['', 0],
   boyong: ['', 0],
   kubahBd: ['', 0],
-  kubahBdMax: ['', 0],
+  kubahBdAvg: ['', 0],
 });
 
 export const videoDb = new Low<{ [key: string]: string }>(new Memory(), {});

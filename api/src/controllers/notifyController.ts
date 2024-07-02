@@ -23,7 +23,7 @@ notifyController.get("/", async (c) => {
 
       while (sendStream) {
         i++
-        const sendStream = memoryDb.data.alertType || (prevAlertType && !memoryDb.data.alertType) || i > 30 || thermalDb.data.krasak[1] > 20 || thermalDb.data.bebeng[1] > 20 || thermalDb.data.boyong[1] > 20 || thermalDb.data.kubahBd[1] > 20 || thermalDb.data.kubahBdMax[1] > 150
+        const sendStream = memoryDb.data.alertType || (prevAlertType && !memoryDb.data.alertType) || i > 30 || thermalDb.data.krasak[1] > 20 || thermalDb.data.bebeng[1] > 20 || thermalDb.data.boyong[1] > 20 || thermalDb.data.kubahBd[1] > 20 || thermalDb.data.kubahBdAvg[1] > 150
         prevAlertType = memoryDb.data.alertType;
 
         if (sendStream) {

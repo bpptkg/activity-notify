@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ThermalData } from "../db";
 import { logger } from "../logger";
+import dayjs from "dayjs";
 
 const eventInProgres = {
   krasak: false,
@@ -11,6 +12,7 @@ const eventInProgres = {
 
 let avgTrigger = false
 let maxTrigger = false
+let kubahBdTimeout = false
 
 const ucFirst = (str: string) => {
   if (!str) return str;
@@ -23,12 +25,18 @@ export const notifyThermalData = async (data: ThermalData) => {
   await Promise.all(rivers.map(async (river): Promise<void> => {
     if (river === 'kubahBd') {
 
-      if (!avgTrigger && !maxTrigger && (data.kubahBdAvg[1] > 20 || data.kubahBd[1] > 100)) {
+      if (!kubahBdTimeout && !avgTrigger && !maxTrigger && (data.kubahBdAvg[1] > 20 || data.kubahBd[1] > 100)) {
         avgTrigger = data.kubahBdAvg[1] > 20
         maxTrigger = data.kubahBd[1] > 100
+        kubahBdTimeout = true
+
+        setTimeout(() => {
+          kubahBdTimeout = false
+        }, 1000 * 60 * 10);
+        
 
         const form = new FormData();
-        const text = `Peringatan!\nTerjadi peningkatan suhu di Kubah BD. Suhu di kubah BD AVG: ${data.kubahBdAvg[1]} derajat MAX: ${data.kubahBd[1]} derajat.\n${data.kubahBd[0]}`;
+        const text = `Peringatan!\nTerjadi peningkatan suhu di Kubah BD. Suhu di kubah BD MAX: ${data.kubahBd[1]} derajat AVG: ${data.kubahBdAvg[1]} derajat.\n${data.kubahBd[0]}`;
         form.append("chat_id", "-1002026839953");
         form.append("text", text);
         form.append("parse_mode", "Markdown");
@@ -45,7 +53,7 @@ export const notifyThermalData = async (data: ThermalData) => {
       } else if (avgTrigger && data.kubahBdAvg[1] < 15) {
         avgTrigger = false
       } else if (maxTrigger && data.kubahBd[1] < 50) {
-        avgTrigger = false
+        maxTrigger = false
       }
     } else {
       if (data[river][1] > 20 && !eventInProgres[river]) {

@@ -25,9 +25,9 @@ export const calculateApg = async ({
   const ratio = Math.round(mepas / melab * 100) / 100;
 
   const alertType =
-    mepas > 35000 && mepas / melab < 2
+    mepas > 35000 && (ratio < 2)
       ? 1
-      : mepas > 100000 && mepas / melab > 2
+      : mepas > 100000 && (ratio > 2)
       ? 2
       : 0;
 

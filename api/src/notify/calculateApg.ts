@@ -1,5 +1,8 @@
+import { JSONFilePreset } from "lowdb/node";
 import { memoryDb } from "../db";
 import { logger } from "../logger";
+import path from "path";
+import dayjs from "dayjs";
 
 let eventInProgress = false
 let calculateApgInProgress = false
@@ -18,6 +21,8 @@ export const calculateApg = async ({
   const date = mepasJSON[mepasJSON.length - 1][0];
   const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
+
+  const ratio = Math.round(mepas / melab * 100) / 100;
 
   const alertType =
     mepas > 35000 && mepas / melab < 2
@@ -41,10 +46,10 @@ export const calculateApg = async ({
         2 === alertType
           ? `Nilai RSAM **${Math.round(
               mepas
-            )}**\nTerjadi Gempa VT Kuat \n**${date}**`
+            )}**\nTerjadi Gempa VT Kuat \nRasio: ${ratio} \n**${date}**`
           : `Nilai RSAM **${Math.round(
               mepas
-            )}**\nWaspadai APG > 1KM \n**${date}**`;
+            )}**\nWaspadai APG > 1KM \nRasio: ${ratio} \n**${date}**`;
 
       form.append("chat_id", "-1002026839953");
       form.append("text", text);
@@ -60,6 +65,22 @@ export const calculateApg = async ({
     } catch (error) {
       logger.log("faild to send photo notification to telegram: ", error);
     }
+
+    const logsDb = await JSONFilePreset<any[]>(
+      path.resolve(
+      process.cwd(),
+        `./data/events-apg-vt-${dayjs().format("YYYY-MM")}.json`
+      ),
+      []
+    );
+
+    await logsDb.update((logs) => {
+      logs.unshift({
+        mepas: mepasJSON[mepasJSON.length - 1],
+        melab: melabJSON[melabJSON.length - 1],
+        ratio
+      });
+    });
   }
 
   if (mepas <= 40000) {

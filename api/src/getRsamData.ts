@@ -56,8 +56,8 @@ export const getRsamData = async () => {
 
     await logsDb.update((logs) => {
       logs.unshift({
-        mepasJSON,
-        melabJSON
+        mepas: mepasJSON[mepasJSON.length - 1],
+        melab: melabJSON[melabJSON.length - 1],
       });
     });
   } catch (error: any) {

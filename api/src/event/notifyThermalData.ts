@@ -59,7 +59,7 @@ export const notifyThermalData = async (data: ThermalData) => {
       if (data[river][1] > 20 && !eventInProgres[river]) {
         eventInProgres[river] = true
         const form = new FormData();
-        const text = `Peringatan! Terjadi RF/AP di sungai ${ucFirst(river)}. Suhu di sungai ${ucFirst(river)} ${data[river][1]} derajat.\n${data[river][0]}`;
+        const text = `Peringatan! Terjadi RF/AP di sungai ${ucFirst(river)}. Suhu di sungai ${ucFirst(river)} MAX: ${data[river][1]} derajat AVG: ${data[`${river}Avg`][1]} derajat.\n${data[river][0]}`;
         form.append("chat_id", "-1002026839953");
         form.append("text", text);
         form.append("parse_mode", "Markdown");

@@ -21,17 +21,23 @@ export const getThermalData = async () => {
       return data.pop()
     }))
 
-    const { data: kubahBdAvgs } = await axios.get(
-      `http://192.168.0.43:8333/api/v1/thermal-axis-kal/?area=kubah-bd&sampling=minute&start=${dayjs().subtract(3, 'minutes').format('YYYY-MM-DD HH:mm:ss')}&end=${dayjs().add(3, 'minutes').format('YYYY-MM-DD HH:mm:ss')}&field_type=avg_temp&use_sky_filter=true`
-      , { headers: { Authorization: 'Api-Key 1JPZxKW5.RCpwvwK5O4T5hYFTzfPpSp9o2PdTtRwa' } });
+    const [krasakAvg, bebengAvg, boyongAvg, kubahBdAvg] = await Promise.all(locations.map(async (location) => {
+      const { data } = await axios.get(
+        `http://192.168.0.43:8333/api/v1/thermal-axis-kal/?area=${location}&sampling=minute&start=${dayjs().subtract(3, 'minutes').format('YYYY-MM-DD HH:mm:ss')}&end=${dayjs().add(3, 'minutes').format('YYYY-MM-DD HH:mm:ss')}&field_type=avg_temp&use_sky_filter=true`
+        , { headers: { Authorization: 'Api-Key 1JPZxKW5.RCpwvwK5O4T5hYFTzfPpSp9o2PdTtRwa' } });
 
-    const kubahBdAvg = kubahBdAvgs.pop()
+      return data.pop()
+    }))
+
 
     thermalDb.update(async (data) => {
       data.krasak = krasak ? [dayjs(krasak.timestamp).format('YYYY-MM-DD HH:mm:ss'), krasak.temp] : ['', 0]
       data.bebeng = bebeng ? [dayjs(bebeng.timestamp).format('YYYY-MM-DD HH:mm:ss'), bebeng.temp] : ['', 0]
       data.boyong = boyong ? [dayjs(boyong.timestamp).format('YYYY-MM-DD HH:mm:ss'), boyong.temp] : ['', 0]
       data.kubahBd = kubahBd ? [dayjs(kubahBd.timestamp).format('YYYY-MM-DD HH:mm:ss'), kubahBd.temp] : ['', 0]
+      data.krasakAvg = krasakAvg ? [dayjs(krasakAvg.timestamp).format('YYYY-MM-DD HH:mm:ss'), krasakAvg.temp] : ['', 0]
+      data.bebengAvg = bebengAvg ? [dayjs(bebengAvg.timestamp).format('YYYY-MM-DD HH:mm:ss'), bebengAvg.temp] : ['', 0]
+      data.boyongAvg = boyongAvg ? [dayjs(boyongAvg.timestamp).format('YYYY-MM-DD HH:mm:ss'), boyongAvg.temp] : ['', 0]
       data.kubahBdAvg = kubahBdAvg ? [dayjs(kubahBdAvg.timestamp).format('YYYY-MM-DD HH:mm:ss'), kubahBdAvg.temp] : ['', 0]
     })
 

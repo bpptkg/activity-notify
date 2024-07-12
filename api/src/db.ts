@@ -15,6 +15,9 @@ export type ThermalData = {
   'bebeng': [string, number];
   'boyong': [string, number];
   'kubahBd': [string, number];
+  'krasakAvg': [string, number];
+  'bebengAvg': [string, number];
+  'boyongAvg': [string, number];
   'kubahBdAvg': [string, number];
 };
 export const thermalDb = new Low<ThermalData>(new Memory(), {
@@ -22,6 +25,9 @@ export const thermalDb = new Low<ThermalData>(new Memory(), {
   bebeng: ['', 0],
   boyong: ['', 0],
   kubahBd: ['', 0],
+  krasakAvg: ['', 0],
+  bebengAvg: ['', 0],
+  boyongAvg: ['', 0],
   kubahBdAvg: ['', 0],
 });
 

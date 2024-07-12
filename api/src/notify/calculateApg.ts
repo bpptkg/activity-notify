@@ -28,15 +28,19 @@ export const calculateApg = async ({
     mepas > 35000 && (ratio < 2)
       ? 1
       : mepas > 100000 && (ratio > 2)
-      ? 2
-      : 0;
+        ? 2
+        : 0;
 
-  await memoryDb.update(async (data) => {
-    data.mepas = mepas;
-    data.melab = melab;
-    data.date = date;
-    data.alertType = alertType;
-  });
+  try {
+    await memoryDb.update(async (data) => {
+      data.mepas = mepas;
+      data.melab = melab;
+      data.date = date;
+      data.alertType = alertType;
+    });
+  } catch (error) {
+    logger.error("faild to send photo notification to telegram: ", error);
+  }
 
   if ((alertType === 1 || alertType === 2) && !eventInProgress) {
     eventInProgress = true;
@@ -45,11 +49,11 @@ export const calculateApg = async ({
       const text =
         2 === alertType
           ? `Nilai RSAM **${Math.round(
-              mepas
-            )}**\nTerjadi Gempa VT Kuat \nRasio: ${ratio} \n**${date}**`
+            mepas
+          )}**\nTerjadi Gempa VT Kuat \nRasio: ${ratio} \n**${date}**`
           : `Nilai RSAM **${Math.round(
-              mepas
-            )}**\nWaspadai APG > 1KM \nRasio: ${ratio} \n**${date}**`;
+            mepas
+          )}**\nWaspadai APG > 1KM \nRasio: ${ratio} \n**${date}**`;
 
       form.append("chat_id", "-1002026839953");
       form.append("text", text);
@@ -62,25 +66,25 @@ export const calculateApg = async ({
           body: form,
         }
       );
-    } catch (error) {
-      logger.log("faild to send photo notification to telegram: ", error);
-    }
 
-    const logsDb = await JSONFilePreset<any[]>(
-      path.resolve(
-      process.cwd(),
-        `./data/events-apg-vt-${dayjs().format("YYYY-MM")}.json`
-      ),
-      []
-    );
+      const logsDb = await JSONFilePreset<any[]>(
+        path.resolve(
+          process.cwd(),
+          `./data/events-apg-vt-${dayjs().format("YYYY-MM")}.json`
+        ),
+        []
+      );
 
-    await logsDb.update((logs) => {
-      logs.unshift({
-        mepas: mepasJSON[mepasJSON.length - 1],
-        melab: melabJSON[melabJSON.length - 1],
-        ratio
+      await logsDb.update((logs) => {
+        logs.unshift({
+          mepas: mepasJSON[mepasJSON.length - 1],
+          melab: melabJSON[melabJSON.length - 1],
+          ratio
+        });
       });
-    });
+    } catch (error) {
+      logger.error("faild to send photo notification to telegram: ", error);
+    }
   }
 
   if (mepas <= 40000) {

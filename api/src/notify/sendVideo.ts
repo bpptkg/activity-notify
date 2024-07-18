@@ -13,11 +13,14 @@ export const sendVideoToTelegram = async () => {
     const form = new FormData();
     form.append("chat_id", "-1002026839953");
     form.append("caption", `#${id}`);
-    form.append('video', createReadStream('/tmp/tmp.mp4'));
+    form.append('video', createReadStream('/tmp/tmp.mp4'), {
+        filename: `#${id}.gif`,
+        contentType: 'video/mp4'
+    });
 
     try {
         const { data } = await axios.post(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
+            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendAnimation`,
             form,
             {
                 headers: form.getHeaders(),

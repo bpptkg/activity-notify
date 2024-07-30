@@ -13,14 +13,11 @@ export const sendVideoToTelegram = async () => {
     const form = new FormData();
     form.append("chat_id", "-1002026839953");
     form.append("caption", `#${id}`);
-    form.append('video', createReadStream('/tmp/tmp.mp4'), {
-        filename: `#${id}.gif`,
-        contentType: 'video/mp4'
-    });
+    form.append('video', createReadStream('/tmp/tmpfast.mp4'));
 
     try {
         const { data } = await axios.post(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendAnimation`,
+            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendVideo`,
             form,
             {
                 headers: form.getHeaders(),
@@ -44,6 +41,12 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
         // 
     }
 
+    try {
+        await unlink(`/tmp/tmp4x.mp4`)
+    } catch (error) {
+        // 
+    }
+
     setTimeout(async () => {
         try {
             await globalDb.update((data) => {
@@ -52,7 +55,7 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
 
             const videos = (await readdir(path))
             videos.pop()
-            const last5Videos = videos.slice(-2) 
+            const last5Videos = videos.slice(-2)
 
             const validVideos = [];
             for (const file of last5Videos) {
@@ -97,7 +100,17 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
                     await globalDb.update((data) => {
                         data.isProcessingVideo = false
                     })
-                    sendVideoToTelegram()
+
+                    ffmpeg(output)
+                        .videoFilters(`setpts=${1 / 10}*PTS`)
+                        .on('end', () => {
+                            console.log('Faster Processing finished!');
+                            sendVideoToTelegram()
+                        })
+                        .on('error', (err) => {
+                            console.error('Faster Error: ' + err.message);
+                        })
+                        .save(`/tmp/tmpfast.mp4`);
                 })
                 .mergeToFile(output, '/tmp')
         } catch (error) {

@@ -54,7 +54,7 @@ export const deleteOldFiles = (dirPath: string) => {
             // logger.info(`Deleted file: ${filePath}`);
           }
         });
-      } else if (file.endsWith("mseed") && isOlderDays(filePath, 7)) {
+      } else if (file.endsWith("mseed") && isOlderDays(filePath, 35)) {
         // logger.info(`Deleting ${file}...`);
         fs.unlink(filePath, (err) => {
           if (err) {

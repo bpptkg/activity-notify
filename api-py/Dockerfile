@@ -4,14 +4,22 @@ FROM python:3.9-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies, including FFmpeg
+# Install system dependencies, including FFmpeg and build essentials
 RUN apt-get update && apt-get install -y \
     ffmpeg \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install uvicorn
+# Copy the requirements file into the container
+# COPY requirements.txt .
+
 # Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir python-telegram-bot python-dotenv fastapi obspy numpy aiohttp
 
 # Copy the application code into the container
 COPY . .
@@ -20,4 +28,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,14 +1,12 @@
-from telegram import Bot
-from telegram.constants import ParseMode
 import os
+import aiohttp
 from dotenv import load_dotenv
-load_dotenv()
 
+load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
-bot = Bot(token=bot_token)
 
-async def sendEvent(date: str, ratio: int, mepasRsam: int, duration: int, output: str):
+async def sendEvent(date: str, ratio: float, mepasRsam: int, duration: int, output: str):
     photo_path = f'{output}'
     time = date
     caption = (
@@ -18,8 +16,16 @@ async def sendEvent(date: str, ratio: int, mepasRsam: int, duration: int, output
         f'Durasi: {duration} detik\n'
         f'Ratio: {ratio}'
     )
-
-    async with bot:
+    
+    url = f'https://api.telegram.org/bot{bot_token}/sendPhoto'
+    
+    async with aiohttp.ClientSession() as session:
         with open(photo_path, 'rb') as photo:
-            await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption, parse_mode=ParseMode.MARKDOWN)
-
+            form = aiohttp.FormData()
+            form.add_field('photo', photo)
+            form.add_field('chat_id', chat_id)
+            form.add_field('caption', caption)
+            form.add_field('parse_mode', 'Markdown')
+            
+            async with session.post(url, data=form) as response:
+                return await response.json()

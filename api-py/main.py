@@ -78,12 +78,18 @@ def get_max_value(
     duration = round(end_utc - start_utc)
     output = "./output/" + (time + 7 * 3600).strftime("%Y%m%d%H%M%S")
 
+    if not os.path.exists('./output'):
+        os.makedirs('./output')
+
     plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output + ".png")
     asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output + ".png"))
     generateVideo(os.getenv('VIDEOS_PATH'), (time + 7 * 3600).datetime, 'Jurangjero', 'JUR', output + ".mp4")
     asyncio.run(sendVideo(output + ".mp4"))
 
     return {
-        "ratio": ratio}
+        "time": (time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"),
+        "rsam": int(max_value["MEPAS"]["rsam"]),
+        "ratio": ratio
+    }
 
 # Run the API with: uvicorn api:app --reload

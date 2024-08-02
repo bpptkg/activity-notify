@@ -2,6 +2,9 @@ import os
 import sys
 import subprocess
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def find_video_files(base_path, target_time, name):
     year = target_time.strftime("%Y")
@@ -53,6 +56,7 @@ def generateVideo(base_path, target_time, name, key, output_file):
         # Use FFmpeg to concatenate the videos and extract the required portion
         cmd = [
             'ffmpeg',
+            '-y',  # Overwrite output file if it exists
             '-f', 'concat',
             '-safe', '0',
             '-i', 'concat.txt',
@@ -66,6 +70,7 @@ def generateVideo(base_path, target_time, name, key, output_file):
         # Use FFmpeg to extract and speed up the video
         cmd = [
             'ffmpeg',
+            '-y',  # Overwrite output file if it exists
             '-ss', str(start_time),
             '-i', target_file,
             '-t', str(min(duration, 60)),

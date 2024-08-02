@@ -6,6 +6,7 @@ import numpy as np
 from plot import plot_waveforms
 from generateVideo import generateVideo
 from sendEvent import sendEvent
+from sendVideo import sendVideo
 import asyncio
 
 # Define the directory where the MSEED files are stored
@@ -75,12 +76,12 @@ def get_max_value(
     time = UTCDateTime(start_utc + max_value["MEPAS"]["time"])
     ratio = round(max_value["MEPAS"]["rsam"] / max_value["MELAB"]["rsam"], 2)
     duration = round(end_utc - start_utc)
-    output = "./output/" + (time + 7 * 3600).strftime("%Y%m%d%H%M%S") + ".png"
+    output = "./output/" + (time + 7 * 3600).strftime("%Y%m%d%H%M%S")
 
-    # plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output)
-    # asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output))
-    generateVideo('/home/tsulatsitamim/Projects/BPPTKG/activity-notify/api-py/videos', (time + 7 * 3600).datetime, 'Jurangjero', 'JUR', output + ".mp4")
-
+    plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output + ".png")
+    asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output + ".png"))
+    generateVideo(os.getenv('VIDEOS_PATH'), (time + 7 * 3600).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+    asyncio.run(sendVideo(output + ".mp4"))
 
     return {
         "ratio": ratio}

@@ -4,8 +4,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-chat_id = '-1002211468994'
-# chat_id = '-1002026839953'
+chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 bot = Bot(token=bot_token)
 

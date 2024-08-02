@@ -4,20 +4,14 @@ from datetime import timedelta
 import os
 import numpy as np
 from plot import plot_waveforms
+from sendEvent import sendEvent
+import asyncio
 
 # Define the directory where the MSEED files are stored
 MSEED_DIR = "./data"
 
 # Initialize FastAPI
 app = FastAPI()
-
-def convert_to_local_time(utc_time: UTCDateTime) -> str:
-    # Convert UTCDateTime to datetime
-    utc_dt = utc_time.datetime
-    # Convert to GMT+7
-    local_dt = utc_dt + timedelta(hours=7)
-    # Format as YYYYMMDDHHmmss
-    return utc_dt.strftime("%Y%m%d%H%M%S")
 
 @app.get("/max")
 def get_max_value(
@@ -51,30 +45,41 @@ def get_max_value(
         st += read(filename)
     st.merge()
 
-    # Find the trace for VG.MEPAS.00.HHZ
-    max_value = None
-    max_value_time = None
+    max_value = {
+        "MEPAS": {
+            "rsam": None,
+            "time": None
+        },
+        "MELAB": {
+            "rsam": None,
+            "time": None
+        }
+    }
+
     for tr in st:
-        if tr.stats.station == 'MEPAS' and tr.stats.channel == 'HHZ':
+        if tr.stats.station in ['MEPAS', "MELAB"]:
             # Trim the trace to the desired time window
             tr_trimmed = tr.trim(starttime=start_utc, endtime=end_utc)
             
             # Find the maximum value in the trimmed trace
             if tr_trimmed.stats.npts > 0:
                 max_value_index = np.argmax(tr_trimmed.data)
-                max_value = np.max(tr_trimmed.data)
-                max_value_time = tr_trimmed.times()[max_value_index]
-            break
+                max_value[tr.stats.station]["rsam"] = np.max(tr_trimmed.data)
+                max_value[tr.stats.station]["time"] = tr_trimmed.times()[max_value_index]
+            continue
 
-    if max_value is None or max_value_time is None:
+    if max_value["MEPAS"]['rsam'] is None or max_value["MELAB"]['rsam'] is None:
             raise HTTPException(status_code=404, detail="Trace not found or no data in the given time range.")
     
-    max_value_time_utc = UTCDateTime(start_utc + max_value_time)  # Convert to UTCDateTime
-    max_value_time_str = convert_to_local_time(max_value_time_utc)
+    time = UTCDateTime(start_utc + max_value["MEPAS"]["time"])
+    ratio = round(max_value["MEPAS"]["rsam"] / max_value["MELAB"]["rsam"], 2)
+    duration = round(end_utc - start_utc)
+    output = "./output/" + (time + 7 * 3600).strftime("%Y%m%d%H%M%S") + ".png"
 
-    output_file = "plot.png"
-    plot_waveforms(max_value_time_str, "./output/" + max_value_time_str + ".png")
+    plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output)
+    asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output))
 
-    return {"mepas": float(max_value), "time": max_value_time_str}
+    return {
+        "ratio": ratio}
 
 # Run the API with: uvicorn api:app --reload

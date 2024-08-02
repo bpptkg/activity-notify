@@ -4,6 +4,7 @@ from datetime import timedelta
 import os
 import numpy as np
 from plot import plot_waveforms
+from generateVideo import generateVideo
 from sendEvent import sendEvent
 import asyncio
 
@@ -76,8 +77,10 @@ def get_max_value(
     duration = round(end_utc - start_utc)
     output = "./output/" + (time + 7 * 3600).strftime("%Y%m%d%H%M%S") + ".png"
 
-    plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output)
-    asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output))
+    # plot_waveforms(time.strftime("%Y%m%d%H%M%S"), output)
+    # asyncio.run(sendEvent((time + 7 * 3600).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_value["MEPAS"]["rsam"], duration, output))
+    generateVideo('/home/tsulatsitamim/Projects/BPPTKG/activity-notify/api-py/videos', (time + 7 * 3600).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+
 
     return {
         "ratio": ratio}

@@ -9,11 +9,15 @@ bot_token = os.getenv('BOT_TOKEN')
 async def sendVideo(output: str):
     video_path = f'{output}'
     url = f'https://api.telegram.org/bot{bot_token}/sendVideo'
+    caption = (
+        f'#manual'
+    )
     
     async with aiohttp.ClientSession() as session:
         with open(video_path, 'rb') as video:
             data = aiohttp.FormData()
             data.add_field('chat_id', chat_id)
+            data.add_field('caption', caption)
             data.add_field('video', video)
             
             async with session.post(url, data=data) as response:

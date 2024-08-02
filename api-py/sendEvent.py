@@ -14,7 +14,8 @@ async def sendEvent(date: str, ratio: float, mepasRsam: int, duration: int, outp
         f'Waktu: {time} WIB\n'
         f'RSAM: {mepasRsam}\n'
         f'Durasi: {duration} detik\n'
-        f'Ratio: {ratio}'
+        f'Ratio: {ratio}\n'
+        f'#manual'
     )
     
     url = f'https://api.telegram.org/bot{bot_token}/sendPhoto'

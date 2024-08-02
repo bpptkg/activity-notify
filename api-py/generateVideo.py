@@ -64,7 +64,7 @@ def generateVideo(base_path, target_time, name, key, output_file):
     print(f"Available after: {available_after}")
 
     if available_after >= 45:
-        start_time = max(0, target_seconds - 15)
+        start_time = max(0, target_seconds - 60)
         duration = 240
     else:
         start_time = max(0, target_seconds - (240 - available_after))

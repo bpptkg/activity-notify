@@ -87,7 +87,7 @@ def generateVideo(base_path, target_time, name, key, output_file):
             '-i', 'concat.txt',
             '-ss', str(start_time),
             '-t', '240',
-            '-filter:v', 'setpts=0.2*PTS',
+            '-filter:v', 'setpts=0.1*PTS',
             '-an',
             output_file
         ]

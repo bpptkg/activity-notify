@@ -65,13 +65,13 @@ def get_max_value(
             
             # Find the maximum value in the trimmed trace
             if tr_trimmed.stats.npts > 0:
-                max_value_index = np.argmax(tr_trimmed.data)
+                event_start_index = np.argmax(tr_trimmed.data > 3000)
                 max_value[tr.stats.station]["rsam"] = np.max(tr_trimmed.data)
-                max_value[tr.stats.station]["time"] = tr_trimmed.times()[max_value_index]
+                max_value[tr.stats.station]["time"] = tr_trimmed.times()[event_start_index]
             continue
 
-    if max_value["MEPAS"]['rsam'] is None or max_value["MELAB"]['rsam'] is None:
-            raise HTTPException(status_code=404, detail="Trace not found or no data in the given time range.")
+    if not max_value["MEPAS"]['time'] or not max_value["MELAB"]['time']:
+            raise HTTPException(status_code=404, detail="Trace not found or no event in the given time range.")
     
     time = UTCDateTime(start_utc + max_value["MEPAS"]["time"])
     ratio = round(max_value["MEPAS"]["rsam"] / max_value["MELAB"]["rsam"], 2)
@@ -92,4 +92,4 @@ def get_max_value(
         "ratio": ratio
     }
 
-# Run the API with: uvicorn api:app --reload
+# Run the API with: uvicorn main:app --reload

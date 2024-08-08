@@ -117,7 +117,7 @@ async def get_max_value(
 
     plot_waveforms((time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png")
     await (sendEvent((time).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_mepas_rsam, event_duration, output + ".png"))
-    generateVideo(os.getenv('VIDEOS_PATH'), (time + 7 * 3600).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+    generateVideo(os.getenv('VIDEOS_PATH'), (time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
     await (sendVideo(output + ".mp4"))
 
     return {

@@ -23,7 +23,7 @@ MSEED_DIR = "./data"
 app = FastAPI()
 
 async def fetch_data(session, code, start, duration):
-    url = f"http://192.168.0.45:16030/rsam/?code={code}&t1={start.strftime("%Y%m%d%H%M")}&t2={(start + timedelta(seconds=duration)).strftime('%Y%m%d%H%M')}&rsamP=1&tz=Asia/Jakarta&csv=1"
+    url = f"http://192.168.0.45:16030/rsam/?code={code}&t1={start.strftime('%Y%m%d%H%M')}&t2={(start + timedelta(seconds=duration)).strftime('%Y%m%d%H%M')}&rsamP=1&tz=Asia/Jakarta&csv=1"
     async with session.get(url) as response:
         return await response.text()
 

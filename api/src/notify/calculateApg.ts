@@ -38,6 +38,7 @@ export const calculateApg = async ({
     await memoryDb.update(async (data) => {
       data.mepas = mepas;
       data.melab = melab;
+      data.meimo = meimo;
       data.date = date;
       data.alertType = alertType;
     });
@@ -82,6 +83,7 @@ export const calculateApg = async ({
         logs.unshift({
           mepas: mepasJSON[mepasJSON.length - 1],
           melab: melabJSON[melabJSON.length - 1],
+          meimo: meimoJSON[meimoJSON.length - 1],
           ratio
         });
       });

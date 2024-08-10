@@ -2,10 +2,11 @@ import { Memory, Low } from "lowdb";
 import { JSONFilePreset } from "lowdb/node";
 import path from "path";
 
-type Data = { mepas: number; melab: number; date: string; alertType: number };
+type Data = { mepas: number; melab: number; meimo: number; date: string; alertType: number };
 export const memoryDb = new Low<Data>(new Memory(), {
   mepas: 0,
   melab: 0,
+  meimo: 0,
   date: "",
   alertType: 0,
 });

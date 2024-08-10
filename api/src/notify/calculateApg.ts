@@ -9,9 +9,11 @@ let calculateApgInProgress = false
 export const calculateApg = async ({
   mepasJSON,
   melabJSON,
+  meimoJSON
 }: {
   mepasJSON: [string, number][];
   melabJSON: [string, number][];
+  meimoJSON: [string, number][]
 }) => {
   if (calculateApgInProgress) {
     return
@@ -21,11 +23,12 @@ export const calculateApg = async ({
   const date = mepasJSON[mepasJSON.length - 1][0];
   const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
+  const meimo = Math.round(meimoJSON[meimoJSON.length - 1][1]);
 
   const ratio = Math.round(mepas / melab * 100) / 100;
 
   const alertType =
-    mepas > 35000 && (ratio < 2)
+    mepas > 35000 && (ratio < 2) && meimo > 2000
       ? 1
       : mepas > 100000 && (ratio > 2)
         ? 2

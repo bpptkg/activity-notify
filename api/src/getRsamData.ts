@@ -16,8 +16,8 @@ const csvToJSON = (csv: string): [string, number][] =>
 
 export const getRsamData = async () => {
   try {
-    const [mepasRawVal, melabRawVal] = await Promise.all(
-      ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"].map(async (code) => {
+    const [mepasRawVal, melabRawVal, meimoRawVal] = await Promise.all(
+      ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00","MEIMO_HHZ_VG_00"].map(async (code) => {
         const response = await fetch(
           `http://192.168.0.45:16030/rsam/?code=${code}&t1=-0.0006&rsamP=1&tz=Asia/Jakarta&csv=1`
         );
@@ -27,11 +27,13 @@ export const getRsamData = async () => {
 
     const mepasJSON = csvToJSON(mepasRawVal);
     const melabJSON = csvToJSON(melabRawVal);
+    const meimoJSON = csvToJSON(meimoRawVal);
 
     mepasJSON.pop()
     melabJSON.pop()
-
-    if (!mepasJSON.length || !melabJSON.length || Number.isNaN(mepasJSON[mepasJSON.length - 1][1])) {
+    meimoJSON.pop()
+    
+    if (!mepasJSON.length || !melabJSON.length || !meimoJSON.length || Number.isNaN(mepasJSON[mepasJSON.length - 1][1])) {
       return;
     }
 
@@ -39,6 +41,7 @@ export const getRsamData = async () => {
       await calculateApg({
         mepasJSON,
         melabJSON,
+        meimoJSON
       }),
       await calculateEvent({
         mepasJSON,

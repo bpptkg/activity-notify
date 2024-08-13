@@ -61,6 +61,7 @@ export const getRsamData = async () => {
       logs.unshift({
         mepas: mepasJSON[mepasJSON.length - 1],
         melab: melabJSON[melabJSON.length - 1],
+        meimo: meimoJSON[meimoJSON.length - 1],
       });
     });
   } catch (error: any) {

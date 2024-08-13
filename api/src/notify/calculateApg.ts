@@ -27,11 +27,10 @@ export const calculateApg = async ({
 
   const ratio = Math.round(mepas / melab * 100) / 100;
 
-  const alertType =
-    meimo > 2000 ? 3 :
-      mepas > 35000 && (ratio < 2)
+  const alertType = 
+    mepas > 35000 && (ratio < 2) && meimo < 2000
         ? 1
-        : mepas > 100000 && (ratio > 2)
+        : mepas > 100000 && (ratio > 2) && meimo < 2000
           ? 2
           : 0;
 
@@ -47,15 +46,11 @@ export const calculateApg = async ({
     logger.error("faild to send photo notification to telegram: ", error);
   }
 
-  if ((alertType === 1 || alertType === 2 || alertType === 3) && !eventInProgress) {
+  if ((alertType === 1 || alertType === 2) && !eventInProgress) {
     eventInProgress = true;
     try {
       const form = new FormData();
-      const text =
-        3 === alertType ? `Nilai RSAM MEIMO **${Math.round(
-          meimo
-        )}**\nTerjadi Gempa Tektonik \n**${date}**` :
-          2 === alertType
+      const text = 2 === alertType
             ? `Nilai RSAM **${Math.round(
               mepas
             )}**\nTerjadi Gempa VT Kuat \nRasio: ${ratio} \n**${date}**`

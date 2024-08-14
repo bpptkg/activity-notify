@@ -4,6 +4,7 @@ import { calculateEvent } from "./notify/calculateEvent";
 import path from "path";
 import dayjs from "dayjs";
 import { logger } from "./logger";
+import { calculateMeimo } from "./notify/calculateMeimo";
 
 const csvToJSON = (csv: string): [string, number][] =>
   csv
@@ -46,6 +47,9 @@ export const getRsamData = async () => {
       await calculateEvent({
         mepasJSON,
         melabJSON,
+      }),
+      await calculateMeimo({
+        meimoJSON
       }),
     ]);
 

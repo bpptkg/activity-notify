@@ -6,7 +6,7 @@ load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 
-async def sendEvent(date: str, ratio: float, mepasRsam: int, duration: int, output: str):
+async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: int, output: str):
     photo_path = f'{output}'
     time = date
     caption = (

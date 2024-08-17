@@ -42,7 +42,7 @@ def convert_to_1fps(input_file, output_file):
     subprocess.run(cmd, check=True)
     return output_file
 
-def generateVideo(base_path, target_time, name, key, output_file):
+def generate_video_from_files(base_path, target_time, name, key, output_file):
     target_file, next_file = find_video_files(base_path, target_time, name)
     if not target_file:
         print(f"No video file found for {target_time} with key {key}")
@@ -128,4 +128,4 @@ if __name__ == "__main__":
     key = sys.argv[4]
     output_file = f"output_{target_time.strftime('%Y%m%d%H%M%S')}_{key}.mp4"
 
-    generateVideo(base_path, target_time, name, key, output_file)
+    generate_video_from_files(base_path, target_time, name, key, output_file)

@@ -6,8 +6,8 @@ load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 
-async def sendVideo(output: str):
-    video_path = f'{output}'
+async def send_video_to_tg(path: str):
+    video_path = f'{path}'
     url = f'https://api.telegram.org/bot{bot_token}/sendVideo'
     caption = (
         f'#manual'

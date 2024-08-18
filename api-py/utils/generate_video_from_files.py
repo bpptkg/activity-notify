@@ -1,7 +1,7 @@
 import os
 import sys
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,6 +34,7 @@ def convert_to_1fps(input_file, output_file):
         'ffmpeg',
         '-loglevel',
         'quiet',
+        '-y',
         '-i', input_file,
         '-vf', 'fps=1',
         '-an',
@@ -62,6 +63,7 @@ def generate_video_from_files(base_path, target_time, name, key, output_file):
     clip_duration = get_video_duration(target_file_1fps)
     available_after = clip_duration - target_seconds
     print(f"Available after: {available_after}")
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
     if available_after >= 45:
         start_time = max(0, target_seconds - 60)

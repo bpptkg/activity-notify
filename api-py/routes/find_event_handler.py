@@ -103,7 +103,7 @@ async def find_event(
 
     plot_waveforms((time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png")
     await (send_event_to_tg((time).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_mepas_rsam, event_duration, output + ".png"))
-    generate_video_from_files(os.getenv('VIDEOS_PATH'), (time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+    generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
     await (send_video_to_tg(output + ".mp4"))
 
     return {

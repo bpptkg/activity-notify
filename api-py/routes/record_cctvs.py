@@ -26,7 +26,7 @@ async def record_cctvs(
 
     outputs = []
     for station_name, station_code in stations:
-        output = f"{os.getenv('VIDEOS_PATH')}/Event/{date_path}/{event}/{station_code}_{start_datetime.strftime('%Y%m%d%H%M')}.mp4"
+        output = f"{os.getenv('VIDEOS_PATH')}/Event/{date_path}/{event}/{start_datetime.strftime('%Y%m%d%H%M')}_{station_code}.mp4"
         path = generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", start_datetime, station_name, station_code, output)
         outputs.append(path)
 

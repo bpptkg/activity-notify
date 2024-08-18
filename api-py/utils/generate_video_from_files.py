@@ -11,6 +11,10 @@ def find_video_files(base_path, target_time, name):
     month = target_time.strftime("%m")
     day = target_time.strftime("%d")
     path = os.path.join(base_path, year, month, day, name)
+    
+    if not os.path.exists(path):
+        return None, None
+    
     files = sorted([f for f in os.listdir(path) if f.endswith(".mp4")])
 
     target_file_name = target_time.strftime("%Y%m%d%H%M%S")
@@ -118,6 +122,7 @@ def generate_video_from_files(base_path, target_time, name, key, output_file):
         os.remove('concat.txt')
 
     print(f"Video saved as {output_file}")
+    return name
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:

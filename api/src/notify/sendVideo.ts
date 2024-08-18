@@ -41,12 +41,6 @@ export const sendVideoFromGallery = async (date: string, duration: number) => {
         // 
     }
 
-    try {
-        await unlink(`/tmp/tmp4x.mp4`)
-    } catch (error) {
-        // 
-    }
-
     setTimeout(async () => {
         try {
             await globalDb.update((data) => {

@@ -40,7 +40,7 @@ def convert_to_1fps(input_file, output_file):
         'quiet',
         '-y',
         '-i', input_file,
-        '-vf', 'fps=1',
+        '-vf', 'fps=12',
         '-an',
         output_file
     ]

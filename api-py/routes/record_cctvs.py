@@ -14,7 +14,6 @@ async def record_cctvs(
     date_path = start_datetime.strftime("%Y/%m/%d")
 
     stations = [
-        ('Jurangjero', 'JUR'),
         ('Panguk-TRM', 'PGK-TRM'),
         ('Plawangan', 'PLA'),
         ('Kaliurang-TRM2', 'KAL-TRM2'),
@@ -23,7 +22,7 @@ async def record_cctvs(
         ('Jurangjero-TRM', 'JUR-TRM'),
         ('Babadan-2', 'BBD2'),
         ('Merbabu', 'MBB')
-    ]
+    ] 
 
     outputs = []
     for station_name, station_code in stations:

@@ -79,6 +79,9 @@ export const calculateEvent = async ({
           }
 
           if (ratio <= 2) {
+            fetch(`http://192.168.0.47:20004/record_cctvs?start=${dayjs(date).format("YYYYMMDDHHmm")}&event=Gempa`).finally(() => {
+              console.log('Generate Videos API Called!');
+            })
             await sendVideoFromGallery(date, duration)
           }
         } catch (error) {

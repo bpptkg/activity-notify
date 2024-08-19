@@ -15,7 +15,7 @@ export const calculateMeimo = async ({
   const date = meimoJSON[meimoJSON.length - 1][0];
   const meimo = Math.round(meimoJSON[meimoJSON.length - 1][1]);
 
-  const alertType = meimo > 2000 ? 1 : 0;
+  const alertType = meimo > 10000 ? 1 : 0;
 
   if (alertType === 1 && !eventInProgress) {
     eventInProgress = true;
@@ -41,7 +41,7 @@ export const calculateMeimo = async ({
     }
   }
 
-  if (meimo <= 750) {
+  if (meimo <= 1000) {
     eventInProgress = false;
   }
 

@@ -46,3 +46,7 @@ export const incrementDb = await JSONFilePreset<{ i: number }>(
 export const globalDb = new Low<{ isProcessingVideo: boolean }>(new Memory(), {
   isProcessingVideo: false
 });
+
+export const stateDb = new Low<{calculateApgInProgress: boolean}>(new Memory(), {
+  calculateApgInProgress: false,
+});

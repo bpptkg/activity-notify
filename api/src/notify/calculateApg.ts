@@ -1,11 +1,10 @@
 import { JSONFilePreset } from "lowdb/node";
-import { memoryDb } from "../db";
+import { memoryDb, stateDb } from "../db";
 import { logger } from "../logger";
 import path from "path";
 import dayjs from "dayjs";
 
 let eventInProgress = false
-let calculateApgInProgress = false
 export const calculateApg = async ({
   mepasJSON,
   melabJSON,
@@ -15,11 +14,13 @@ export const calculateApg = async ({
   melabJSON: [string, number][];
   meimoJSON: [string, number][]
 }) => {
-  if (calculateApgInProgress) {
+  if (stateDb.data.calculateApgInProgress) {
     return
   }
+  await stateDb.update((data) => {
+    data.calculateApgInProgress = true
+  });
 
-  calculateApgInProgress = true
   const date = mepasJSON[mepasJSON.length - 1][0];
   const mepas = Math.round(mepasJSON[mepasJSON.length - 1][1]);
   const melab = Math.round(melabJSON[melabJSON.length - 1][1]);
@@ -92,8 +93,14 @@ export const calculateApg = async ({
   }
 
   if (mepas <= 40000) {
-    eventInProgress = false;
+    setTimeout(async () => {
+      await stateDb.update((data) => {
+        data.calculateApgInProgress = false
+      });
+    }, 10 * 1000);
   }
 
-  calculateApgInProgress = false
+  await stateDb.update((data) => {
+    data.calculateApgInProgress = false
+  });
 };

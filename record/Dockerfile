@@ -1,19 +1,26 @@
-# Use the base image
+# Use jrottenberg/ffmpeg:4.2.7-ubuntu2004 as the base image
 FROM jrottenberg/ffmpeg:4.2.7-ubuntu2004
 
-# Set the timezone
-ENV TZ=Asia/Jakarta
+# Install Monit
+RUN apt-get update && apt-get install -y monit && rm -rf /var/lib/apt/lists/*
 
-# Install tzdata and set timezone
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# Create directory for data
+RUN mkdir /data
 
-# Copy your recording script into the container
-COPY manage_files.sh .
-COPY record_video.sh .
+# Copy the FFmpeg script
+COPY ffmpeg_script.sh /ffmpeg_script.sh
+RUN chmod +x /ffmpeg_script.sh
 
-# Make the script executable
-RUN chmod +x manage_files.sh
-RUN chmod +x record_video.sh
+# Copy Monit configuration
+COPY monitrc /etc/monit/monitrc
+RUN chmod 700 /etc/monit/monitrc
 
-# Set the entrypoint to your script
-ENTRYPOINT ["./record_video.sh"]
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command (can be overridden)
+CMD ["run"]

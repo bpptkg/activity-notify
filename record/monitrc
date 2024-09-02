@@ -1,0 +1,5 @@
+set daemon 30
+set logfile /var/log/monit.log
+
+check program ffmpeg_check with path "/bin/bash -c '[ $(find /data -type f -mmin -5 | wc -l) -gt 0 ]'"
+    if status != 0 for 1 cycles then exec "/usr/bin/pkill ffmpeg && /ffmpeg_script.sh &"

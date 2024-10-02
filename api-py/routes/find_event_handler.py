@@ -144,7 +144,7 @@ async def find_event(
     times = np.array([datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S') for row in mepas_json])
 
     # Define the time variable to filter with
-    start_filter_time = datetime.strptime(start, '%Y%m%d%H%M%S')
+    start_filter_time = datetime.strptime(start, '%Y%m%d%H%M%S') - timedelta(seconds=5)
     end_filter_time = start_filter_time + timedelta(seconds=60)
 
     # Filter rows

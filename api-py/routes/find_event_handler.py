@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import FileResponse
 from obspy import UTCDateTime
 from datetime import timedelta, datetime
 import os
@@ -145,3 +146,27 @@ async def find_event(
         "ratio": plotResult['ramp'],
         "duration": duration
     }
+
+@router.get("/plot")
+async def find_event(
+    start: str = Query(..., description="Start time in YYYYMMDDHHmmss format (GMT+7)"),
+    duration: int = Query(30, description="Duration in seconds")
+):
+    # Validate the time format
+    try:
+        UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid time format. Use YYYYMMDDHHmmss.")
+    
+    # Validate the duration
+    try:
+        if duration <= 0:
+            raise ValueError
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid duration. Duration must be a positive integer.")
+
+    start_time = UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
+    output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
+    plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", duration)
+
+    return FileResponse(output + ".png", media_type="image/png")

@@ -12,7 +12,7 @@ import argparse
 # import os
 # import glob as glob
 
-def plot_wf(st,ax):
+def plot_wf(st,ax,x_limit):
     Fs = st[0].stats.sampling_rate
     sta = st[0].stats.station
     t= np.arange(st[0].stats.npts) / Fs
@@ -20,24 +20,24 @@ def plot_wf(st,ax):
     ax.set_xticklabels([])
     ax.set_ylabel("Amp (Count)")
     ax.legend(bbox_to_anchor=(1, 0.1))
-    ax.set_xlim(0,30)
+    ax.set_xlim(0,x_limit)
 
-def plot_spect(st,ax):
+def plot_spect(st,ax,x_limit):
     st.spectrogram(axes=ax, cmap="seismic")
     # ax.set_xticklabels([])
     ax.minorticks_on()
     ax.set_ylabel("Freq (Hz)")
     ax.set_ylim(0,15)
-    ax.set_xlim(0,30)
+    ax.set_xlim(0,x_limit)
     plt.grid(visible=True,axis="y")
 
-def plot_waveforms(eventtime: str,namafile1: str):
+def plot_waveforms(eventtime: str,namafile1: str, duration: int = 30, offset: int = -10):
     sta = ["MEPAS","MELAB","MEDEL","MEIMO"]
     eventtime = UTCDateTime(eventtime)
     namafile =  f"./data/{eventtime.strftime('%Y-%m-%d')}.mseed"
     st = read(namafile)
-    tstart = eventtime - 10
-    tend = tstart + 30
+    tstart = eventtime + offset
+    tend = tstart + duration
     st.trim(starttime=tstart,endtime=tend)
 
     st = st.detrend()
@@ -61,8 +61,8 @@ def plot_waveforms(eventtime: str,namafile1: str):
                 amp1 = np.abs(st0[0].max())
             elif sta[i]=="MELAB":
                 amp2 = np.abs(st0[0].max())
-            plot_wf(st0,ax1)
-            plot_spect(st0,ax2)
+            plot_wf(st0,ax1,duration)
+            plot_spect(st0,ax2,duration)
             if i != 3:
                 ax1.set_xticklabels([])
                 ax2.set_xticklabels([])
@@ -79,7 +79,7 @@ def plot_waveforms(eventtime: str,namafile1: str):
             if i==3:
                 t= np.arange(3500)
                 ax2.plot(t,np.zeros(len(t)),color="w")
-                ax2.set_xlim(0,35)
+                ax2.set_xlim(0,duration)
                 ax2.set_xlabel("time(s)" )
             else:
                 ax2.set_xticklabels([])
@@ -89,4 +89,9 @@ def plot_waveforms(eventtime: str,namafile1: str):
                  + " Amax= " + '%.2f' % amp1 + " r_Amax= " + '%.2f' % ramp)
     plt.subplots_adjust(bottom=0.07)
     plt.savefig( namafile1 )
+
+    return {
+        "amp1": '%.2f' % amp1,
+        "ramp": '%.2f' % ramp
+    }
 

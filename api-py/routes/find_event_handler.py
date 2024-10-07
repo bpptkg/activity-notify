@@ -118,11 +118,11 @@ async def find_event(
     start: str = Query(..., description="Start time in YYYYMMDDHHmmss format (GMT+7)"),
     duration: int = Query(60, description="Duration in seconds")
 ):
-    # Validate the time format and convert to UTC
+    # Validate the time format
     try:
-        UTCDateTime.strptime(start, "%Y%m%d%H%M%S") - 7 * 3600 - 5
+        UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid time format. Use YYYYMMDDHHmm.")
+        raise HTTPException(status_code=400, detail="Invalid time format. Use YYYYMMDDHHmmss.")
     
     # Validate the duration
     try:
@@ -131,46 +131,19 @@ async def find_event(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid duration. Duration must be a positive integer.")
 
-    codes = ["MEPAS_HHZ_VG_00", "MELAB_HHZ_VG_00"]
-    async with aiohttp.ClientSession() as session:
-        raw_values = await asyncio.gather(*(fetch_data(session, code, UTCDateTime.strptime(start, "%Y%m%d%H%M%S") - 7 * 3600 - 60 * 2, 60 * 5) for code in codes))
-
-    mepas_raw_val, melab_raw_val = raw_values
+    start_time = UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
+    output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
     
-    mepas_json = winston_csv_to_json(mepas_raw_val)
-    melab_json = winston_csv_to_json(melab_raw_val)
+    event_duration = 65
+    plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", 60)
 
-    # Convert the time strings to datetime objects
-    times = np.array([datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S') for row in mepas_json])
-
-    # Define the time variable to filter with
-    start_filter_time = datetime.strptime(start, '%Y%m%d%H%M%S') - timedelta(seconds=5)
-    end_filter_time = start_filter_time + timedelta(seconds=60)
-
-    # Filter rows
-    filtered_mepas = mepas_json[(times > start_filter_time) & (times < end_filter_time)]
-    filtered_melab = melab_json[(times > start_filter_time) & (times < end_filter_time)]
-
-    # Find the maximum value
-    max_mepas_rsam = np.max(filtered_mepas[:, 1].astype(float))
-    max_melab_rsam = np.max(filtered_melab[:, 1].astype(float))
-
-    event_start_time = filtered_mepas[0][0]
-    
-    time = UTCDateTime.strptime(event_start_time, "%Y-%m-%d %H:%M:%S")
-    output = "./output/" + time.strftime("%Y-%m-%d_%H.%M.%S")
-    ratio = round(max_mepas_rsam / max_melab_rsam, 2)
-    event_duration = duration
-    max_mepas_rsam = round(max_mepas_rsam)
-
-    plot_waveforms((time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png")
-    await (send_event_to_tg((time).strftime("%Y-%m-%d %H:%M:%S"), ratio, max_mepas_rsam, event_duration, output + ".png"))
-    generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], event_duration, output + ".png"))
+    generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (start_time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
     await (send_video_to_tg(output + ".mp4"))
 
     return {
-        "time": filtered_mepas[0][0],
-        "rsam": max_mepas_rsam,
-        "ratio": ratio,
+        "time": (start_time -  5).strftime("%Y-%m-%d %H:%M:%S"),
+        "rsam": plotResult['amp1'],
+        "ratio": plotResult['ramp'],
         "duration": event_duration
     }

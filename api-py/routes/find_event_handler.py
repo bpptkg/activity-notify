@@ -114,9 +114,10 @@ async def find_event(
         "duration": event_duration
     }
 
-@router.get("/notify")
+@router.get("/resend-stream")
 async def find_event(
     start: str = Query(..., description="Start time in YYYYMMDDHHmmss format (GMT+7)"),
+    index: int = Query(0, description="Duration in seconds"),
     duration: int = Query(60, description="Duration in seconds")
 ):
     # Validate the time format
@@ -136,16 +137,39 @@ async def find_event(
     output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
     plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", duration, -5)
 
-    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png"))
-    generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (start_time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
-    await (send_video_to_tg(output + ".mp4"))
+    link = f'#{index}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start={start}&index={index}&duration={duration})'
 
-    return {
-        "time": (start_time -  5).strftime("%Y-%m-%d %H:%M:%S"),
-        "rsam": plotResult['amp1'],
-        "ratio": plotResult['ramp'],
-        "duration": duration
-    }
+    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png", link))
+
+    return FileResponse(output + ".png", media_type="image/png")
+
+@router.get("/resend-video")
+async def find_event(
+    start: str = Query(..., description="Start time in YYYYMMDDHHmmss format (GMT+7)"),
+    index: int = Query(0, description="Duration in seconds"),
+    duration: int = Query(60, description="Duration in seconds")
+):
+    # Validate the time format
+    try:
+        UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid time format. Use YYYYMMDDHHmmss.")
+    
+    # Validate the duration
+    try:
+        if duration <= 0:
+            raise ValueError
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid duration. Duration must be a positive integer.")
+
+    start_time = UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
+    output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
+    link = f'#{index}\n[Resend Video](https://proxy.cendana15.com/notify/resend-video?start={start}&index={index}&duration={duration})'
+   
+    generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (start_time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
+    await (send_video_to_tg(output + ".mp4", link))
+
+    return FileResponse(output + ".mp4", media_type="video/mp4")
 
 @router.get("/plot")
 async def find_event(

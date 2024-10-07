@@ -6,7 +6,7 @@ load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 
-async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: int, output: str):
+async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: int, output: str, hash: str = '#manual'):
     photo_path = f'{output}'
     time = date
     caption = (
@@ -15,7 +15,7 @@ async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: in
         f'RSAM: {mepasRsam}\n'
         f'Durasi: {duration} detik\n'
         f'Ratio: {ratio}\n'
-        f'#manual'
+        f'{hash}'
     )
     
     url = f'https://api.telegram.org/bot{bot_token}/sendPhoto'

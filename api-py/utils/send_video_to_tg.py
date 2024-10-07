@@ -6,11 +6,11 @@ load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 
-async def send_video_to_tg(path: str):
+async def send_video_to_tg(path: str, hash: str = '#manual'):
     video_path = f'{path}'
     url = f'https://api.telegram.org/bot{bot_token}/sendVideo'
     caption = (
-        f'#manual'
+        f'{hash}'
     )
     
     async with aiohttp.ClientSession() as session:

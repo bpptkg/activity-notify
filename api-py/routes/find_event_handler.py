@@ -133,11 +133,9 @@ async def find_event(
 
     start_time = UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
     output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
-    
-    event_duration = 65
-    plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", 60)
+    plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", duration, -5)
 
-    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], event_duration, output + ".png"))
+    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png"))
     generate_video_from_files(os.getenv('VIDEOS_PATH') + "/Video Monitoring", (start_time).datetime, 'Jurangjero', 'JUR', output + ".mp4")
     await (send_video_to_tg(output + ".mp4"))
 
@@ -145,5 +143,5 @@ async def find_event(
         "time": (start_time -  5).strftime("%Y-%m-%d %H:%M:%S"),
         "rsam": plotResult['amp1'],
         "ratio": plotResult['ramp'],
-        "duration": event_duration
+        "duration": duration
     }

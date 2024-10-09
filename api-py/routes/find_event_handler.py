@@ -135,7 +135,7 @@ async def find_event(
 
     start_time = UTCDateTime.strptime(start, "%Y%m%d%H%M%S")
     output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
-    plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png", duration, -5)
+    plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png")
 
     link = f'#{index}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start={start}&index={index}&duration={duration})'
 

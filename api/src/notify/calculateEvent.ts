@@ -74,7 +74,7 @@ export const calculateEvent = async ({
           await sendEvent(ratio, duration, time, mepasRsam, `#${id}`);
           if (!imageIsSent) {
 
-            await sendPlot(date, `#${id}\n${link}`);
+            await sendPlot(date, link);
             if (ratio <= 2) {
               await sendCctv(`#${id}`);
             }
@@ -108,7 +108,7 @@ export const calculateEvent = async ({
           const id = incrementDb.data.i
           const link = `#${id}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start=${dayjs(date).format("YYYYMMDDHHmmss")}&index=${id})`
 
-          await sendPlot(date, `#${id}\n${link}`);
+          await sendPlot(date, link);
           if (ratio <= 2) {
             await sendCctv(`#${id}`);
           }

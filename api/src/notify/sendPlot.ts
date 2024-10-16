@@ -9,14 +9,16 @@ export const sendPlot = async (date: string, id: string) => {
   form.append("parse_mode", "Markdown");
   form.append("caption", id);
 
-  try {
-    await plotStream(date, form);
-    const { data } = await axios.post(
-      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
-      form
-    );
-    logger.info("sent plot to telegram: ", data);
-  } catch (error) {
-    logger.info("faild to send photo plot to telegram: ", error);
-  }
+  setTimeout(async () => {
+    try {
+      await plotStream(date, form);
+      const { data } = await axios.post(
+        `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendPhoto`,
+        form
+      );
+      logger.info("sent plot to telegram: ", data);
+    } catch (error) {
+      logger.info("faild to send photo plot to telegram: ", error);
+    }
+  }, 10 * 1000);
 };

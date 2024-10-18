@@ -2,7 +2,9 @@
 FROM jrottenberg/ffmpeg:4.2.7-ubuntu2004
 
 # Install Monit
-RUN apt-get update && apt-get install -y monit && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y monit tzdata && rm -rf /var/lib/apt/lists/*
+RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Create directory for data
 RUN mkdir /data

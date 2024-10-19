@@ -14,9 +14,8 @@ class MyClient(EasySeedLinkClient):
         fn = f'/app/data/{current_date}.mseed'
 
         try:
-            print(f'Trying to append to {fn}...')
             traces = read(fn)
-            print(f'Appending to {fn}...')
+            print(f'Appending to {fn}... \nstation: {trace.stats.station}  start: {trace.stats.starttime} end: {trace.stats.endtime}')
             traces.append(trace)
             traces.merge(fill_value="latest")
             traces.write(fn, format='MSEED')

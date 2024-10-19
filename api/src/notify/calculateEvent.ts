@@ -74,7 +74,9 @@ export const calculateEvent = async ({
           await sendEvent(ratio, duration, time, mepasRsam, `#${id}`);
           if (!imageIsSent) {
 
-            await sendPlot(date, link);
+            setTimeout(async () => {
+              await sendPlot(date, link);
+            }, 30 - duration > 0 ? (30 - duration) * 1000 : 1000);
             if (ratio <= 2) {
               await sendCctv(`#${id}`);
             }

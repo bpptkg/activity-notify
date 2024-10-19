@@ -2,12 +2,13 @@ import FormData from "form-data";
 import { plotStream } from "./plotStream";
 import axios from "axios";
 import { logger } from "../logger";
+import dayjs from "dayjs";
 
 export const sendPlot = async (date: string, id: string) => {
   const form = new FormData();
   form.append("chat_id", "-1002026839953");
   form.append("parse_mode", "Markdown");
-  form.append("caption", id);
+  form.append("caption", `${id}\nGenerated at ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
 
   try {
     await plotStream(date, form);

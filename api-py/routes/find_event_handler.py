@@ -118,7 +118,8 @@ async def find_event(
 async def find_event(
     start: str = Query(..., description="Start time in YYYYMMDDHHmmss format (GMT+7)"),
     index: int = Query(0, description="Duration in seconds"),
-    duration: int = Query(60, description="Duration in seconds")
+    duration: int = Query(60, description="Duration in seconds"),
+    plotOnly: int = Query(0, description="Plot only 1 or 0")
 ):
     # Validate the time format
     try:
@@ -137,7 +138,7 @@ async def find_event(
     output = "./output/" + start_time.strftime("%Y-%m-%d_%H.%M.%S")
     plotResult = plot_waveforms((start_time - 7 * 3600).strftime("%Y%m%d%H%M%S"), output + ".png")
 
-    link = f'#{index}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start={start}&index={index}&duration={duration})'
+    link = f'#{index}' if plotOnly else f'#{index}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start={start}&index={index}&duration={duration})'
 
     await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png", link))
 

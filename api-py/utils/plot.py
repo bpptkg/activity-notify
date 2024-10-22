@@ -31,7 +31,7 @@ def plot_spect(st,ax,x_limit):
     ax.set_xlim(0,x_limit)
     plt.grid(visible=True,axis="y")
 
-def plot_waveforms(eventtime: str,namafile1: str, duration: int = 30, offset: int = -10):
+def plot_waveforms(eventtime: str, namafile1: str, duration: int = 30, offset: int = -10):
     sta = ["MEPAS","MELAB","MEDEL","MEIMO"]
     eventtime = UTCDateTime(eventtime)
     namafile =  f"./data/{eventtime.strftime('%Y-%m-%d')}.mseed"

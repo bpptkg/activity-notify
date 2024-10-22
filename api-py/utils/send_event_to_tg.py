@@ -6,10 +6,10 @@ load_dotenv()
 chat_id = os.getenv('CHAT_ID')
 bot_token = os.getenv('BOT_TOKEN')
 
-async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: int, output: str, hash: str = '#manual'):
+async def send_event_to_tg(date: str, ratio: float, mepasRsam: int, duration: int, output: str, hash: str = '#manual', plotOnly: int = 0):
     photo_path = f'{output}'
     time = date
-    caption = (
+    caption = f'{hash}' if plotOnly else (
         f'Terjadi gempa:\n'
         f'Waktu: {time} WIB\n'
         f'RSAM: {mepasRsam}\n'

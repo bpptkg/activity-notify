@@ -140,7 +140,7 @@ async def find_event(
 
     link = f'#{index}' if plotOnly else f'#{index}\n[Stream Update](https://proxy.cendana15.com/notify/resend-stream?start={start}&index={index}&duration={duration})'
 
-    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png", link))
+    await (send_event_to_tg((start_time).strftime("%Y-%m-%d %H:%M:%S"), plotResult['ramp'], plotResult['amp1'], duration, output + ".png", link, plotOnly))
 
     return FileResponse(output + ".png", media_type="image/png")
 
